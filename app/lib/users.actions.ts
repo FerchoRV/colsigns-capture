@@ -38,14 +38,14 @@ export async function loginUser(email: string, password: string) {
 
     if (user && (await bcrypt.compare(password, user.password))) {
       const userData = {
-        id: user.id.toString(),
+        id: user.id.toString(),  // ✅ Asegurar que se guarde como string
         username: user.username,
         role_id: user.role_id.toString(),
       };
 
-      // Guardar sesión en sessionStorage
+      // Guardar sesión en localStorage (en vez de sessionStorage)
       if (typeof window !== 'undefined') {
-        sessionStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('user', JSON.stringify(userData));  // ✅ Ahora se guarda correctamente
       }
 
       return userData;

@@ -48,7 +48,7 @@ model users {
 
 model users_data {
   id         BigInt @id @default(autoincrement())
-  user_id    BigInt
+  user_id    BigInt 
   first_name String
   last_name  String
   level_id   BigInt

@@ -49,7 +49,8 @@ export default function LoginForm() {
       // 🔹 Guardar `username` y `role_id` en localStorage
       localStorage.setItem('user', JSON.stringify({
         username: data.username,
-        role_id: data.role_id
+        role_id: data.role_id,
+        id: data.id,
       }));
 
       console.log("Login exitoso. Redirigiendo a:", callbackUrl);
