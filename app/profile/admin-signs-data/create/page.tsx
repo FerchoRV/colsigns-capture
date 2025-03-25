@@ -1,12 +1,9 @@
 import RegisterExampleVideoForm from '@/app/ui/admin-signs-data/register-example-video';
 import { Suspense } from 'react';
 import ProtectedRoute from "../../../components/ProtectedRoute";
-import ColsingLogo from '@/app/ui/colsing-logo';
-import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import styles from '@/app/ui/home.module.css';
 import { lusitana } from '@/app/ui/fonts';
-import Image from 'next/image';
  
 export default function RegisterExampleVideoPage() {
   return (

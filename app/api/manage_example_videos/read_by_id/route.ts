@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
     const signName = await getSignNameById(Number(id));
     return NextResponse.json(signName);
   } catch (error) {
-    return NextResponse.error();
+    console.error('Error getting sign name example for ID:', error);
+    return NextResponse.json({ error : 'Failed to get sign name example'} , {status: 500});
   }
 }

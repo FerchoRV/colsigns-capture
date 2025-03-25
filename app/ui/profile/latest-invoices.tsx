@@ -4,13 +4,13 @@ import Image from 'next/image';
 import { lusitana } from '@/app/ui/fonts';
 import {fetchLatestInvoices} from '@/app/lib/data';
 
-interface LatestInvoice {
-  id: string;
-  name: string;
-  email: string;
-  amount: string;
-  image_url: string;
-}
+// interface LatestInvoice {
+//   id: string;
+//   name: string;
+//   email: string;
+//   amount: string;
+//   image_url: string;
+// }
 
 export default async function LatestInvoices() {
   const latestInvoices = await fetchLatestInvoices();

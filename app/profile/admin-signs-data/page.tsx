@@ -1,11 +1,8 @@
 import React from 'react';
 import ProtectedRoute from "../../components/ProtectedRoute";
-import ColsingLogo from '@/app/ui/colsing-logo';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import styles from '@/app/ui/home.module.css';
 import { lusitana } from '@/app/ui/fonts';
-import Image from 'next/image';
 
 const AdminMetadataPage: React.FC = () => {
     return (

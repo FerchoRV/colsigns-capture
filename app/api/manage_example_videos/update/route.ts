@@ -7,6 +7,7 @@ export async function PUT(req: NextRequest) {
         const signName = await updateSignName(id, name, videoExamplePath, typeId);
         return NextResponse.json(signName);
     } catch (error) {
-        return NextResponse.error();
+        console.error('Error updating sign name example:', error);
+        return NextResponse.json({ error: 'Failed to update sign name example' }, { status: 500 });
     }
     }

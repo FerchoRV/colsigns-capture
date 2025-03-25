@@ -3,10 +3,10 @@ import { CalendarIcon } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
 import { fetchRevenue } from '@/app/lib/data';
 
-interface Revenue {
-  month: string;
-  revenue: number;
-}
+// interface Revenue {
+//   month: string;
+//   revenue: number;
+// }
 
 // This component is representational only.
 // For data visualization UI, check out:

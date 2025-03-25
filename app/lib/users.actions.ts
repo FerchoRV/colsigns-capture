@@ -53,6 +53,7 @@ export async function loginUser(email: string, password: string) {
       throw new Error('Invalid credentials.');
     }
   } catch (error) {
+    console.error("Error en Prisma:", error);  // ✅ Imprime el error en la base de datos 
     throw new Error('Database Error: Failed to Login User.');
   }
 }

@@ -31,6 +31,7 @@ export async function updateUserDataById(userId: number, firstName: string, last
     });
     return userData;
   } catch (error) {
+    console.error("❌ Error en Prisma:", error);
     throw new Error('Database Error: Failed to Update User Data.');
   }
 }
@@ -42,6 +43,7 @@ export async function getUserDataById(userId: number) {
     });
     return userData;
   } catch (error) {
+    console.error("❌ Error en Prisma:", error);
     throw new Error('Database Error: Failed to Get User Data.');
   }
 }

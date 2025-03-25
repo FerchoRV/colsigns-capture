@@ -7,6 +7,7 @@ export async function DELETE(req: NextRequest) {
     const signName = await deleteSignName(id);
     return NextResponse.json(signName);
   } catch (error) {
-    return NextResponse.error();
+    console.error('Error deleting sign name example:', error);
+    return NextResponse.json({ error: 'Failed to delete sign name example' }, { status: 500 });
   }
 }

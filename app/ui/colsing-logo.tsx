@@ -1,6 +1,4 @@
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignLanguage } from '@fortawesome/free-solid-svg-icons';
 

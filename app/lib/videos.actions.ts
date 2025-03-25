@@ -13,8 +13,9 @@ export async function createVideo(userId: number, videoPath: string, levelId: nu
       },
     });
     return video;
-  } catch (error) {
-    throw new Error('Database Error: Failed to Create Video.');
+  } catch (error) {    
+    console.error(error);
+    throw new Error('Database Error: Failed to Create Video.');    
   }
 }
 
@@ -29,6 +30,7 @@ export async function getVideos() {
     });
     return videos;
   } catch (error) {
+    console.error(error);
     throw new Error('Database Error: Failed to Fetch Videos.');
   }
 }
@@ -46,6 +48,7 @@ export async function updateVideo(id: number, userId: number, videoPath: string,
     });
     return video;
   } catch (error) {
+    console.error(error);
     throw new Error('Database Error: Failed to Update Video.');
   }
 }
@@ -56,6 +59,7 @@ export async function deleteVideo(id: number) {
       where: { id },
     });
   } catch (error) {
+    console.error(error);
     throw new Error('Database Error: Failed to Delete Video.');
   }
 }

@@ -1,16 +1,13 @@
 'use client';
 
-import { lusitana } from '@/app/ui/fonts';
 import {
-  AtSymbolIcon,
-  KeyIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/20/solid';
+import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '@/app/ui/button';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+
 
 export default function RegisterExampleVideoForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);

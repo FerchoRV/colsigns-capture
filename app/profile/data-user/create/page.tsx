@@ -1,6 +1,4 @@
-import RegisterForm from '@/app/ui/register-form';
 import { Suspense } from 'react';
-import ColsingLogo from '@/app/ui/colsing-logo';
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import RegisterDataUserForm from '@/app/ui/profile/data-user-form';
  

@@ -11,6 +11,7 @@ export async function createLevel(name: string) {
     });
     return level;
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Create Level.');
   }
 }
@@ -20,6 +21,7 @@ export async function getLevels() {
     const levels = await prisma.levels.findMany();
     return levels;
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Fetch Levels.');
   }
 }

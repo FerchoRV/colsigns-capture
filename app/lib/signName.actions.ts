@@ -13,6 +13,7 @@ export async function createSignName(name: string, videoExamplePath: string, typ
     });
     return signName;
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Create Sign Name.');
   }
 }
@@ -27,6 +28,7 @@ export async function getSignNamesAll() {
     });
     return signNames;
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Fetch Sign Names.');
   }
 }
@@ -42,6 +44,7 @@ export async function getSignNameById(id: number) {
     });
     return signName;
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Fetch Sign Name.');
   }
 }
@@ -58,6 +61,7 @@ export async function updateSignName(id: number, name: string, videoExamplePath:
     });
     return signName;
   } catch (error) {
+    console.log(error); 
     throw new Error('Database Error: Failed to Update Sign Name.');
   }
 }
@@ -68,6 +72,7 @@ export async function deleteSignName(id: number) {
       where: { id },
     });
   } catch (error) {
+    console.log(error);
     throw new Error('Database Error: Failed to Delete Sign Name.');
   }
 }

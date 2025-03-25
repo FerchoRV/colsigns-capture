@@ -1,4 +1,3 @@
-import AcmeLogo from '@/app/ui/colsing-logo';
 import LoginForm from '@/app/ui/login-form';
 import { Suspense } from 'react';
 import Link from 'next/link';
