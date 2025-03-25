@@ -10,7 +10,7 @@ export default function ColsingLogo() {
       className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
     >
       <FontAwesomeIcon icon={faSignLanguage} size="2x" className="h-12 w-12 rotate-[15deg]" />
-      <p className="text-[40px]">Colsing</p>
+      <p className="text-[40px]">Colsign</p>
     </div>
   );
 }

@@ -71,7 +71,7 @@ const ProfilePage: React.FC = () => {
       
         {userData === null ? (
           <div>
-            <p>No se encontró datos de usuario. Por favor, envia tu información para continuar, esto es de gran ayuda para esta investigacion, ademas d elo contrario tus videos no se tendran en cuenta gracias.</p>
+            <p>No se encontró datos de usuario. Por favor, envia tu información para continuar, esto es de gran ayuda para esta investigacion, ademas de lo contrario tus videos no se tendran en cuenta gracias.</p>
             <Link
               href="/profile/data-user/create"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
