@@ -9,7 +9,13 @@ import Link from "next/link";
 const ProfilePage: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<{ username: string; id: string } | null>(null);
-  const [userData, setUserData] = useState<any>(null);
+  interface UserData {
+    firstName: string;
+    lastName: string;
+    level: number;
+  }
+
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

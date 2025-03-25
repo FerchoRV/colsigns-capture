@@ -1,4 +1,4 @@
-export async function POST(_: Request) {
+export async function POST() {
     // Eliminar sesión (depende de cómo la manejes en el backend)
     return new Response(null, {
       status: 200,
