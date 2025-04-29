@@ -7,10 +7,16 @@ import { Button } from '@/app/ui/button';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebaseConfig';
 
+interface UserData {
+  firstName: string;
+  lastName: string;
+  levelId: number;
+}
+
 export default function UpdateDataUserForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-  const [userData, setUserData] = useState<any>(null); // Estado para almacenar los datos del usuario
+  const [userData, setUserData] = useState<UserData | null>(null); // Especifica el tipo de userData
   const router = useRouter();
 
   useEffect(() => {
@@ -23,7 +29,8 @@ export default function UpdateDataUserForm() {
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
-          setUserData(userDoc.data());
+          const data = userDoc.data() as UserData; // Especifica el tipo de los datos obtenidos
+          setUserData(data);
         } else {
           console.warn('⚠️ No se encontraron datos del usuario en Firestore.');
         }
@@ -60,9 +67,9 @@ export default function UpdateDataUserForm() {
 
       console.log('✅ Datos actualizados correctamente en Firestore.');
       router.push('/profile'); // Redirigir al perfil después de actualizar
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error actualizando datos en Firestore:', error);
-      setErrorMessage(error.message || 'Error actualizando datos en Firestore.');
+      setErrorMessage((error as Error).message || 'Error actualizando datos en Firestore.');
     } finally {
       setIsPending(false);
     }
@@ -107,7 +114,7 @@ export default function UpdateDataUserForm() {
         <select
           id="typeId"
           name="typeId"
-          defaultValue={userData.levelId || '1'}
+          defaultValue={userData.levelId.toString() || '1'}
           required
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >

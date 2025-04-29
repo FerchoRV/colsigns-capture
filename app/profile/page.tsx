@@ -9,11 +9,17 @@ import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '@/firebase/firebaseConfig';
 
+interface UserData{
+  firstName: string;
+  lastName: string;
+  levelId: number;
+}
+
 const ProfilePage: React.FC = () => {
   const router = useRouter();
-  const [user, setUser] = useState<{ username: string; id: string; roleId?: number; email?: string } | null>(null);
-  const [userData, setUserData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+  const [user] = useState<{ username: string; id: string; roleId?: number; email?: string } | null>(null);
+  const [userData, setUserData] = useState<UserData>(null);
+  const [loading] = useState(true);
 
   const allowedRoles = [1, 2]; // Define allowed roles
 
@@ -28,7 +34,12 @@ const ProfilePage: React.FC = () => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             console.log("Datos del usuario obtenidos de Firestore:", userData);
-            setUserData(userData); // Actualiza el estado con los datos del usuario
+            if (userData && userData.firstName && userData.lastName && userData.levelId) {
+              setUserData(userData as UserData); // Cast to UserData after validation
+            } else {
+              console.warn('⚠️ Datos del usuario incompletos en Firestore.');
+              setUserData(null);
+            }
           } else {
             console.warn('⚠️ No se encontraron datos del usuario en Firestore.');
             setUserData(null);

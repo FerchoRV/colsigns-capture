@@ -1,5 +1,4 @@
 import { Suspense } from 'react';
-import ProtectedRoute from "@/app/components/ProtectedRoute";
 import RegisterDataUserForm from '@/app/ui/profile/data-user-form';
  
 export default function LoginPage() {

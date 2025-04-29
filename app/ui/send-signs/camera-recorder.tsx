@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 
 const CameraRecorder: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -11,7 +11,7 @@ const CameraRecorder: React.FC = () => {
     const [isCameraOn, setIsCameraOn] = useState(false);
 
     // Función para iniciar la cámara
-    const startCamera = async () => {
+    const startCamera = useCallback(async () => {
         try {
             const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
             setStream(userStream);
@@ -21,10 +21,10 @@ const CameraRecorder: React.FC = () => {
         } catch (error) {
             console.error("Error al acceder a la cámara:", error);
         }
-    };
+    }, []);
 
     // Función para detener la cámara
-    const stopCamera = () => {
+    const stopCamera = useCallback(() => {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             setStream(null);
@@ -32,7 +32,7 @@ const CameraRecorder: React.FC = () => {
                 videoRef.current.srcObject = null;
             }
         }
-    };
+    }, [stream]);
 
     // Efecto para manejar la cámara
     useEffect(() => {
@@ -43,7 +43,7 @@ const CameraRecorder: React.FC = () => {
         }
 
         return () => stopCamera();
-    }, [isCameraOn]);
+    }, [isCameraOn, startCamera, stopCamera]);
 
     // Función para iniciar la grabación
     const startRecording = () => {

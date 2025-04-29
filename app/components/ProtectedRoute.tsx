@@ -6,6 +6,11 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebaseConfig';
 
+interface User {
+  uid: string;
+  email: string;
+  roleId: number;
+}
 export default function ProtectedRoute({
   children,
   allowedRoles,
@@ -13,7 +18,7 @@ export default function ProtectedRoute({
   children: React.ReactNode;
   allowedRoles: number[];
 }) {
-  const [user, setUser] = useState<any>(null); // Estado para almacenar los datos del usuario
+  const [user, setUser] = useState<User>(null); // Estado para almacenar los datos del usuario
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -30,7 +35,7 @@ export default function ProtectedRoute({
             const userData = userDoc.data();
             // Convertir roleId a número si es necesario
             const roleId = parseInt(userData.roleId, 10); // Asegurarse de que sea un número
-            setUser({ ...userData, roleId, uid: firebaseUser.uid }); // Combinar datos de Firestore con el UID
+            setUser({ ...userData, roleId, uid: firebaseUser.uid, email: firebaseUser.email || '' }); // Combinar datos de Firestore con el UID y agregar email
           } else {
             console.error('❌ El documento del usuario no existe en Firestore.');
             setUser(null);

@@ -35,15 +35,15 @@ export default function RegisterDataUserForm() {
         lastName,
         levelId: parseInt(levelId, 10), // Convertir a número si es necesario
         email: user.email,
-        roleId:parseInt(roleId, 10), // Guardar el rol predeterminado
+        roleId: parseInt(roleId, 10), // Guardar el rol predeterminado
         createdAt: new Date(),
       });
 
       console.log('✅ Datos creados correctamente en Firestore.');
       router.push('/profile');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('❌ Error guardando datos en Firestore:', error);
-      setErrorMessage(error.message || 'Error guardando datos en Firestore.');
+      setErrorMessage((error as Error).message || 'Error guardando datos en Firestore.');
     } finally {
       setIsPending(false);
     }

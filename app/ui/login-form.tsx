@@ -6,8 +6,8 @@ import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '@/app/ui/button';
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getRedirectResult } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getRedirectResult, UserCredential } from 'firebase/auth';
+import { doc, setDoc, getDoc, DocumentData } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebaseConfig';
 
 export default function LoginForm() {
@@ -20,7 +20,7 @@ export default function LoginForm() {
   useEffect(() => {
     const handleRedirectResult = async () => {
       try {
-        const result = await getRedirectResult(auth);
+        const result: UserCredential | null = await getRedirectResult(auth);
         if (result) {
           const user = result.user;
           console.log("Usuario autenticado con Google:", user);
@@ -63,14 +63,14 @@ export default function LoginForm() {
 
     try {
       // 🔹 Iniciar sesión con Firebase Authentication (correo y contraseña)
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       console.log("Usuario autenticado:", user);
 
       // 🔹 Verificar si es la primera vez que inicia sesión
       const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
+      const userDoc: DocumentData = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
         // Si no existe el documento del usuario, redirigir a la página de registro
@@ -81,9 +81,9 @@ export default function LoginForm() {
         console.log("Usuario existente. Redirigiendo a su perfil:");
         router.push('/profile');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error en inicio de sesión:", error);
-      setErrorMessage(error.message || 'Error en inicio de sesión');
+      setErrorMessage((error as Error).message || 'Error en inicio de sesión');
     } finally {
       setIsPending(false);
     }
@@ -96,14 +96,14 @@ export default function LoginForm() {
     try {
       // 🔹 Iniciar sesión con Google
       const provider = new GoogleAuthProvider();
-      const userCredential = await signInWithPopup(auth, provider);
+      const userCredential: UserCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
 
       console.log("Usuario autenticado con Google:", user);
 
       // 🔹 Verificar si es la primera vez que inicia sesión
       const userDocRef = doc(db, 'users', user.uid);
-      const userDoc = await getDoc(userDocRef);
+      const userDoc: DocumentData = await getDoc(userDocRef);
 
       if (!userDoc.exists()) {
         // Si no existe el documento del usuario, guardar información básica y redirigir a registro
@@ -119,9 +119,9 @@ export default function LoginForm() {
         console.log("Usuario existente. Redirigiendo a su perfil");
         router.push('/profile');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error en inicio de sesión con Google:", error);
-      setErrorMessage(error.message || 'Error en inicio de sesión con Google');
+      setErrorMessage((error as Error).message || 'Error en inicio de sesión con Google');
     } finally {
       setIsPending(false);
     }
