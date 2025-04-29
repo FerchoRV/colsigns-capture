@@ -1,16 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { Button } from '@/app/ui/button';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebase/firebaseConfig';
 
-export default function RegisterDataUserForm() {
+export default function UpdateDataUserForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const [userData, setUserData] = useState<any>(null); // Estado para almacenar los datos del usuario
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) throw new Error('Usuario no autenticado');
+
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          setUserData(userDoc.data());
+        } else {
+          console.warn('⚠️ No se encontraron datos del usuario en Firestore.');
+        }
+      } catch (error) {
+        console.error('❌ Error obteniendo datos del usuario:', error);
+        setErrorMessage('Error al cargar los datos del usuario.');
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,28 +50,27 @@ export default function RegisterDataUserForm() {
       const user = auth.currentUser;
       if (!user) throw new Error('Usuario no autenticado');
 
-      // Obtener el valor predeterminado del rol desde la variable de entorno
-      const roleId = process.env.NEXT_PUBLIC_APP_ROLE;
-
-      // Guardar información adicional en Firestore
-      await setDoc(doc(db, 'users', user.uid), {
+      // Actualizar información del usuario en Firestore
+      const userDocRef = doc(db, 'users', user.uid);
+      await updateDoc(userDocRef, {
         firstName,
         lastName,
         levelId: parseInt(levelId, 10), // Convertir a número si es necesario
-        email: user.email,
-        roleId:parseInt(roleId, 10), // Guardar el rol predeterminado
-        createdAt: new Date(),
       });
 
-      console.log('✅ Datos creados correctamente en Firestore.');
-      router.push('/profile');
+      console.log('✅ Datos actualizados correctamente en Firestore.');
+      router.push('/profile'); // Redirigir al perfil después de actualizar
     } catch (error: any) {
-      console.error('❌ Error guardando datos en Firestore:', error);
-      setErrorMessage(error.message || 'Error guardando datos en Firestore.');
+      console.error('❌ Error actualizando datos en Firestore:', error);
+      setErrorMessage(error.message || 'Error actualizando datos en Firestore.');
     } finally {
       setIsPending(false);
     }
   };
+
+  if (!userData) {
+    return <p>Cargando datos del usuario...</p>;
+  }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -59,6 +82,7 @@ export default function RegisterDataUserForm() {
           id="firstName"
           name="firstName"
           type="text"
+          defaultValue={userData.firstName || ''}
           required
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
@@ -71,6 +95,7 @@ export default function RegisterDataUserForm() {
           id="lastName"
           name="lastName"
           type="text"
+          defaultValue={userData.lastName || ''}
           required
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
@@ -82,6 +107,7 @@ export default function RegisterDataUserForm() {
         <select
           id="typeId"
           name="typeId"
+          defaultValue={userData.levelId || '1'}
           required
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         >
@@ -101,7 +127,7 @@ export default function RegisterDataUserForm() {
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           disabled={isPending}
         >
-          {isPending ? 'Enviando...' : 'Enviar Datos'}
+          {isPending ? 'Actualizando...' : 'Actualizar Datos'}
         </Button>
       </div>
     </form>

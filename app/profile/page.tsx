@@ -2,74 +2,68 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
+import { doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth, db } from '@/firebase/firebaseConfig';
 
 const ProfilePage: React.FC = () => {
   const router = useRouter();
-  const [user, setUser] = useState<{ username: string; id: string } | null>(null);
-  interface UserData {
-    firstName: string;
-    lastName: string;
-    level: number;
-  }
-
-  const [userData, setUserData] = useState<UserData | null>(null);
+  const [user, setUser] = useState<{ username: string; id: string; roleId?: number; email?: string } | null>(null);
+  const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const allowedRoles = [1, 2]; // Define allowed roles
+
+  
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
   
-    if (storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
-        setUser({ username: parsedUser.username, id: parsedUser.id });
-  
-        const getUserData = async () => {
-          setLoading(true);
-          const data = await fetchUserData(parsedUser.id);
-          setUserData(data); // Si no hay datos, será null
-          setLoading(false);
-        };
-  
-        getUserData();
-      } catch (error) {
-        console.error("Error parsing user data:", error);
-        router.replace("/login");
-      }
-    } else {
-      router.replace("/login");
-    }
-  }, []);
-
-  const fetchUserData = async (userId: string) => {
-    try {
-      const response = await fetch(`/api/data_user/read-user?id=${userId}`);
-  
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn("⚠️ Usuario sin datos, debe actualziar la información.");
-          return null; // Retorna null en lugar de lanzar error
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log("Datos del usuario obtenidos de Firestore:", userData);
+            setUserData(userData); // Actualiza el estado con los datos del usuario
+          } else {
+            console.warn('⚠️ No se encontraron datos del usuario en Firestore.');
+            setUserData(null);
+          }
+        } catch (error) {
+          console.error('❌ Error obteniendo datos del usuario:', error);
+          setUserData(null);
         }
-        throw new Error(`Error en la solicitud: ${response.statusText}`);
+      } else {
+        console.log('🔴 Usuario no autenticado. Redirigiendo a /login...');
+        router.replace('/login'); // Redirige si no está autenticado
       }
+    });
   
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("❌ Error fetching user data:", error);
-      return null;
+    return () => unsubscribe(); // Limpia el listener al desmontar el componente
+  }, [router]);
+
+  useEffect(() => {
+    if (loading) return ; // No hacer nada mientras se carga
+  
+    if (!user) {
+      console.log('🔴 Usuario no autenticado. Redirigiendo a /login...');
+      router.push('/login'); // Redirigir a la página de inicio de sesión si no está autenticado
+    } else {
+      console.log("✅ Usuario autenticado:", user);
+      console.log("🔍 Validando roleId:", user.roleId);
+  
+      if (!allowedRoles.includes(user.roleId)) {
+        console.log(
+          `🔴 Acceso denegado a ${user.email} con roleId: ${user.roleId}. Redirigiendo a /unauthorized...`
+        );
+        router.push('/unauthorized'); // Redirigir si el rol no está permitido
+      }
     }
-  };
-
-  
-
-  if (loading) return <p>Cargando...</p>;
-
-  if (!user) return null;
-
-  
+  }, [user, loading, allowedRoles, router]);
 
   return (
     <ProtectedRoute allowedRoles={[1, 2]}>
@@ -105,7 +99,7 @@ const ProfilePage: React.FC = () => {
                   <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                     <dt className="text-sm font-medium text-gray-500">Nivel de Manejo de Signos</dt>
                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                      {userData.level === 1 ? "Experto" : userData.level === 2 ? "Intermedio" : "Novato"}
+                      {userData.levelId === 1 ? "Experto" : userData.levelId === 2 ? "Intermedio" : "Novato"}
                     </dd>
                   </div>
                 </dl>

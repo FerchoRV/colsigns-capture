@@ -1,53 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from '@/firebase/firebaseConfig';
 
 export function useAuth() {
-  const [user, setUser] = useState<{ username: string; role_id: number; id:number } | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // 🔹 Estado de carga
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('user');
-      console.log("Valor de storedUser:", storedUser);
-      
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          parsedUser.role_id = Number(parsedUser.role_id); // Convertir role_id a número
-          if (parsedUser.hasOwnProperty('id')) {
-            parsedUser.userid = String(parsedUser.userid); // Convertir userid a string
-          } else {
-            console.error("Error: userid no está definido en parsedUser", parsedUser);
-          }
-          setUser(parsedUser);
-          console.log("Usuario cargado desde localStorage:", parsedUser);
-        } catch (error) {
-          console.error("Error al parsear usuario:", error);
-          localStorage.removeItem('user');
-          setUser(null);
-        }
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser); // Puedes agregar más datos si los obtienes de Firestore
       } else {
         setUser(null);
       }
-      setIsLoading(false); // 🔹 Terminó la carga
-    }
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const login = (userData: { username: string; role_id: number; id:number }) => {
-    if (!userData.role_id) {
-      console.error("Error: role_id no está definido en userData", userData);
-      return;
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      console.log('✅ Sesión cerrada correctamente');
+    } catch (error) {
+      console.error('❌ Error al cerrar sesión:', error);
     }
-    localStorage.setItem('user', JSON.stringify(userData));
-    setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem('user');
-    setUser(null);
-    window.location.href = '/'; // Redirigir al home después de cerrar sesión
-  };
-
-  return { user, isLoading, login, logout };
+  return { user, logout };
 }
-
-

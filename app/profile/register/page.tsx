@@ -4,7 +4,7 @@ import Link from 'next/link';
 import ColsingLogo from '@/app/ui/colsing-logo';
 import ProtectedRoute from "../../components/ProtectedRoute";
  
-export default function LoginPage() {
+const RegisterUserAdminPage: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={[1]}>
     <main className="flex items-center justify-center md:h-screen">
@@ -28,3 +28,5 @@ export default function LoginPage() {
     </ProtectedRoute>
   );
 }
+
+export default RegisterUserAdminPage;

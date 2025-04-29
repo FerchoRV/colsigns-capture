@@ -1,38 +1,73 @@
-'use client'
+'use client';
 
-import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/firebase/firebaseConfig';
 
-export default function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles: number[] }) {
-  const { user } = useAuth();
+export default function ProtectedRoute({
+  children,
+  allowedRoles,
+}: {
+  children: React.ReactNode;
+  allowedRoles: number[];
+}) {
+  const [user, setUser] = useState<any>(null); // Estado para almacenar los datos del usuario
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (user !== null) {
-      setIsLoading(false);
-    }
-  }, [user]);
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return; // 🔹 No hacer nada hasta que termine la carga
+    // Escuchar cambios en el estado de autenticación
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        try {
+          // Obtener los datos adicionales del usuario desde Firestore
+          const userDocRef = doc(db, 'users', firebaseUser.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            // Convertir roleId a número si es necesario
+            const roleId = parseInt(userData.roleId, 10); // Asegurarse de que sea un número
+            setUser({ ...userData, roleId, uid: firebaseUser.uid }); // Combinar datos de Firestore con el UID
+          } else {
+            console.error('❌ El documento del usuario no existe en Firestore.');
+            setUser(null);
+          }
+        } catch (error) {
+          console.error('❌ Error obteniendo datos del usuario:', error);
+          setUser(null);
+        }
+      } else {
+        setUser(null); // Usuario no autenticado
+      }
+      setIsLoading(false); // Finalizar la carga
+    });
+
+    return () => unsubscribe(); // Limpiar el listener al desmontar el componente
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return; // No hacer nada mientras se carga
 
     if (!user) {
-      console.log("🔴 Usuario no autenticado. Redirigiendo a /profile...");
-      router.push("/profile");
-    } else if (!allowedRoles.includes(user.role_id)) {
-      console.log(`🔴 Acceso denegado a ${user.username} con role_id: ${user.role_id}. Redirigiendo a /profile...`);
-      router.push("/profile");
+      console.log('🔴 Usuario no autenticado. Redirigiendo a /login...');
+      router.push('/login'); // Redirigir a la página de inicio de sesión si no está autenticado
+    } else if (!allowedRoles.includes(user.roleId)) {
+      console.log(
+        `🔴 Acceso denegado a ${user.email} con roleId: ${user.roleId}. Redirigiendo a /unauthorized...`
+      );
+      router.push('/unauthorized'); // Redirigir si el rol no está permitido
     }
   }, [user, isLoading, allowedRoles, router]);
 
   if (isLoading) {
-    return <div>Cargando...</div>; // 🔹 Muestra un mensaje de carga
+    return <div>Cargando...</div>; // Mostrar un mensaje de carga mientras se obtienen los datos
   }
 
-  if (!user || !allowedRoles.includes(user.role_id)) {
-    return null; // 🔹 No renderiza nada mientras redirige
+  if (!user || !allowedRoles.includes(user.roleId)) {
+    return null; // No renderizar nada mientras redirige
   }
 
   return <>{children}</>;

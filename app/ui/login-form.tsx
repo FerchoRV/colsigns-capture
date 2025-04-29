@@ -4,8 +4,11 @@ import { lusitana } from '@/app/ui/fonts';
 import { AtSymbolIcon, KeyIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '@/app/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, getRedirectResult } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '@/firebase/firebaseConfig';
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -14,7 +17,40 @@ export default function LoginForm() {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
 
-  console.log("Redirigiendo a:", callbackUrl);
+  useEffect(() => {
+    const handleRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const user = result.user;
+          console.log("Usuario autenticado con Google:", user);
+
+          // 🔹 Verificar si es la primera vez que inicia sesión
+          const userDocRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userDocRef);
+
+          if (!userDoc.exists()) {
+            // Si no existe el documento del usuario, guardar información básica y redirigir a registro
+            await setDoc(userDocRef, {
+              email: user.email,
+              name: user.displayName,
+              createdAt: new Date(),
+            });
+            console.log("Primera vez que inicia sesión con Google. Redirigiendo a /register...");
+            router.push("/register");
+          } else {
+            // Si ya existe, redirigir a la URL de callback
+            console.log("Usuario existente. Redirigiendo a su perfil");
+            router.push("/profile");
+          }
+        }
+      } catch (error) {
+        console.error("Error manejando el resultado de redirección:", error);
+      }
+    };
+
+    handleRedirectResult();
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,41 +62,66 @@ export default function LoginForm() {
     const password = formData.get('password') as string;
 
     try {
-      const res = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      // 🔹 Iniciar sesión con Firebase Authentication (correo y contraseña)
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Error en inicio de sesión');
-      }
+      console.log("Usuario autenticado:", user);
 
-      const data = await res.json();
+      // 🔹 Verificar si es la primera vez que inicia sesión
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      console.log("Datos recibidos del backend:", data); // ✅ Verificar qué envía el backend
-
-      // 🔹 Asegurar que `role_id` está presente
-      if (!data.role_id) {
-        throw new Error("El servidor no devolvió role_id");
-      }
-
-      // 🔹 Guardar `username` y `role_id` en localStorage
-      localStorage.setItem('user', JSON.stringify({
-        username: data.username,
-        role_id: data.role_id,
-        id: data.id,
-      }));
-
-      console.log("Login exitoso. Redirigiendo a:", callbackUrl);
-      router.push(callbackUrl);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
+      if (!userDoc.exists()) {
+        // Si no existe el documento del usuario, redirigir a la página de registro
+        console.log("Primera vez que inicia sesión. Redirigiendo a /register...");
+        router.push('/register');
       } else {
-        setErrorMessage('An unknown error occurred');
+        // Si ya existe, redirigir a la URL de callback
+        console.log("Usuario existente. Redirigiendo a su perfil:");
+        router.push('/profile');
       }
+    } catch (error: any) {
+      console.error("Error en inicio de sesión:", error);
+      setErrorMessage(error.message || 'Error en inicio de sesión');
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsPending(true);
+    setErrorMessage(null);
+
+    try {
+      // 🔹 Iniciar sesión con Google
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+
+      console.log("Usuario autenticado con Google:", user);
+
+      // 🔹 Verificar si es la primera vez que inicia sesión
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        // Si no existe el documento del usuario, guardar información básica y redirigir a registro
+        await setDoc(userDocRef, {
+          email: user.email,
+          name: user.displayName,
+          createdAt: new Date(),
+        });
+        console.log("Primera vez que inicia sesión con Google. Redirigiendo a /register...");
+        router.push('/register');
+      } else {
+        // Si ya existe, redirigir a la URL de callback
+        console.log("Usuario existente. Redirigiendo a su perfil");
+        router.push('/profile');
+      }
+    } catch (error: any) {
+      console.error("Error en inicio de sesión con Google:", error);
+      setErrorMessage(error.message || 'Error en inicio de sesión con Google');
     } finally {
       setIsPending(false);
     }
@@ -113,6 +174,16 @@ export default function LoginForm() {
         <Button className="mt-4 w-full" aria-disabled={isPending} disabled={isPending}>
           {isPending ? "Iniciando sesión..." : "Log in"}
           <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        </Button>
+
+        {/* 🔹 Botón para iniciar sesión con Google */}
+        <Button
+          type="button"
+          className="mt-4 w-full bg-red-500 hover:bg-red-600"
+          onClick={handleGoogleLogin}
+          disabled={isPending}
+        >
+          {isPending ? "Iniciando sesión con Google..." : "Iniciar sesión con Google"}
         </Button>
 
         {/* 🔹 Mostrar error en caso de fallo */}
