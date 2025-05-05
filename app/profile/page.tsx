@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
@@ -21,7 +21,8 @@ const ProfilePage: React.FC = () => {
   const [userData, setUserData] = useState<UserData>(null);
   const [loading] = useState(true);
 
-  const allowedRoles = [1, 2]; // Define allowed roles
+  // Memoizar allowedRoles para evitar que cambie en cada render
+  const allowedRoles = useMemo(() => [1, 2], []);
 
   
   useEffect(() => {
@@ -77,7 +78,7 @@ const ProfilePage: React.FC = () => {
   }, [user, loading, allowedRoles, router]);
 
   return (
-    <ProtectedRoute allowedRoles={[1, 2]}>
+    <ProtectedRoute allowedRoles={allowedRoles}>
       <div className="flex min-h-screen flex-col p-6 max-w-3xl">
       
         {userData === null ? (

@@ -5,11 +5,11 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Acme Dashboard',
-    default: 'Acme Dashboard',
+    template: '%s | Basado de Acme Dashboard',
+    default: 'Colsign',
   },
-  description: 'The official Next.js Learn Dashboard built with App Router.',
-  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+  description: 'Colsign project to support the social inclusion of Colombian deaf people.',
+  metadataBase: new URL('https://colsigns-app.vercel.app/'),
 };
 
 export default function RootLayout({

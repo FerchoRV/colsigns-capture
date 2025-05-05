@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 
 const CameraRecorder: React.FC = () => {
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -13,7 +13,7 @@ const CameraRecorder: React.FC = () => {
     // Función para iniciar la cámara
     const startCamera = useCallback(async () => {
         try {
-            const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const userStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
             setStream(userStream);
             if (videoRef.current) {
                 videoRef.current.srcObject = userStream;
@@ -34,16 +34,6 @@ const CameraRecorder: React.FC = () => {
         }
     }, [stream]);
 
-    // Efecto para manejar la cámara
-    useEffect(() => {
-        if (isCameraOn) {
-            startCamera();
-        } else {
-            stopCamera();
-        }
-
-        return () => stopCamera();
-    }, [isCameraOn, startCamera, stopCamera]);
 
     // Función para iniciar la grabación
     const startRecording = () => {
@@ -86,7 +76,7 @@ const CameraRecorder: React.FC = () => {
             {/* Botón para activar/desactivar la cámara */}
             {!isCameraOn ? (
                 <button
-                    onClick={() => setIsCameraOn(true)}
+                    onClick={() => {setIsCameraOn(true); startCamera()}}
                     className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
                 >
                     Encender Cámara
@@ -115,7 +105,7 @@ const CameraRecorder: React.FC = () => {
 
                         {/* Botón para apagar la cámara */}
                         <button
-                            onClick={() => setIsCameraOn(false)}
+                            onClick={() => {setIsCameraOn(false); stopCamera()}}
                             className="px-4 py-2 text-white bg-red-500 rounded-lg hover:bg-red-600"
                         >
                             Apagar Cámara
