@@ -2,18 +2,36 @@
 
 import React, { useState } from "react";
 
-const ExampleVideo: React.FC = () => {
-    const [showVideo, setShowVideo] = useState(false);
+interface ExampleVideoProps {
+    name: string; // Nombre del signo
+    meaning: string; // Significado del signo
+    videoPath: string; // URL del video
+    reference: string; // Enlace a más información
+}
 
-    // Ruta del video en el servidor
-    const videoSrc = "/example-videos/hola.mp4";
+const ExampleVideo: React.FC<ExampleVideoProps> = ({ name, meaning, videoPath, reference }) => {
+    const [showVideo, setShowVideo] = useState(false);
 
     return (
         <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-lg shadow-md w-full">
+            {/* Información del signo */}
+            <h3 className="text-lg font-bold">Nombre Signo: {name}</h3>
+            <p className="text-sm text-gray-700">Significado: {meaning}</p>
+
+            {/* Enlace a más información */}
+            <a
+                href={reference}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline text-sm"
+            >
+                Más información
+            </a>
+
             {/* Video aparece arriba del botón */}
             {showVideo && (
                 <video controls className="w-full h-64 bg-black rounded-lg">
-                    <source src={videoSrc} type="video/mp4" />
+                    <source src={videoPath} type="video/mp4" />
                     Tu navegador no soporta la reproducción de videos.
                 </video>
             )}

@@ -27,7 +27,7 @@ export default function RegisterDataUserForm() {
       if (!user) throw new Error('Usuario no autenticado');
 
       // Obtener el valor predeterminado del rol desde la variable de entorno
-      const roleId = process.env.NEXT_PUBLIC_APP_ROLE;
+      const roleId = process.env.NEXT_PUBLIC_APP_ROLE_2;
 
       // Guardar información adicional en Firestore
       await setDoc(doc(db, 'users', user.uid), {

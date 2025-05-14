@@ -22,7 +22,7 @@ const ProfilePage: React.FC = () => {
   const [loading] = useState(true);
 
   // Memoizar allowedRoles para evitar que cambie en cada render
-  const allowedRoles = useMemo(() => [1, 2], []);
+  const allowedRoles = useMemo(() => [parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1),parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2),parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)], []);
 
   
   useEffect(() => {

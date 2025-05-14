@@ -1,30 +1,193 @@
-import React from 'react';
+'use client';
+import React, { useState, useEffect } from 'react';
 import ProtectedRoute from "../../components/ProtectedRoute";
-import FormSendSigns from "@/app/ui/send-signs/send-sign-form";
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { db } from '@/firebase/firebaseConfig';
 import CameraRecorder from '@/app/ui/send-signs/camera-recorder';
 import ExampleVideo from '@/app/ui/send-signs/example-video';
 
+// Define la interfaz para los signos
+interface Sign {
+  id: string;
+  name: string;
+  type: string;
+  status: string;
+  videoPath: string;
+  meaning?: string; // Opcional
+  reference?: string; // Opcional
+}
+
 const SendSignsPage: React.FC = () => {
-    return (
-         <ProtectedRoute allowedRoles={[1, 2]}>
-            <div className="flex grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
-                {/* Primera fila: ocupa las dos columnas en pantallas grandes */}
-                    <div className="flex sm:col-span-2 bg-gray-50 p-4 rounded-lg">
-                    <FormSendSigns /> 
-                    </div>
-        
-                {/* Segunda fila: dos columnas en pantallas grandes */}
-                    <div className="flex grid bg-gray-50 p-4 rounded-lg gap-2 p-2">
-                        <p>Solo empieza grabar cuando se envie la infomacion del signo poravor</p>                                       
-                        <CameraRecorder />
-                    </div>
-                    <div className="flex w-full h-32 grid bg-gray-50 p-4 rounded-lg gap-2 p-2">
-                        <p>Para ver el video de ejemplo del signos pulse el siguiente boton</p>                                       
-                        <ExampleVideo />
-                    </div>
+  const [typeId, setTypeId] = useState(''); // Tipo de signo seleccionado
+  const [signs, setSigns] = useState<Sign[]>([]); // Lista de signos obtenidos
+  const [selectedSign, setSelectedSign] = useState<Sign | null>(null); // Signo seleccionado
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null); // ID del usuario autenticado
+  const [levelId, setLevelId] = useState<string | null>(null); // Nivel del usuario autenticado
+
+  // Obtener el usuario autenticado y su nivel desde Firestore
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (user) {
+        setUserId(user.uid); // Establecer el ID del usuario
+
+        // Obtener el nivel del usuario desde Firestore
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          setLevelId(userDoc.data().levelId); // Establecer el nivel del usuario
+        } else {
+          console.error('El documento del usuario no existe en Firestore.');
+        }
+      } else {
+        console.error('No hay un usuario autenticado.');
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  // Buscar signos por tipo y estado activo
+  const handleSearch = async () => {
+    if (!typeId.trim()) {
+      setErrorMessage('Por favor selecciona un tipo de signo.');
+      return;
+    }
+
+    setIsPending(true);
+    setErrorMessage(null);
+
+    try {
+      const videoExampleCollection = collection(db, 'video_example');
+      const q = query(
+        videoExampleCollection,
+        where('type', '==', typeId),
+        where('status', '==', 'activo')
+      );
+      const querySnapshot = await getDocs(q);
+
+      const signsList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Sign[]; // Asegúrate de que los datos coincidan con la interfaz
+
+      setSigns(signsList);
+      if (signsList.length === 0) {
+        setErrorMessage('No se encontraron signos con el tipo seleccionado.');
+      }
+    } catch (error) {
+      console.error('Error buscando los signos:', error);
+      setErrorMessage('Error buscando los signos.');
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  // Limpiar la búsqueda y los datos seleccionados
+  const handleClear = () => {
+    setTypeId('');
+    setSigns([]);
+    setSelectedSign(null);
+    setErrorMessage(null);
+  };
+
+  return (
+    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
+      <div className="flex flex-col gap-4 p-4">
+        {/* Buscar signos */}
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h1 className="text-xl font-bold">Buscar Signos</h1>
+          <div className="space-y-2">
+            <label htmlFor="typeId" className="block text-sm font-medium text-gray-700">
+              Tipo de signo
+            </label>
+            <select
+              id="typeId"
+              value={typeId}
+              onChange={(e) => setTypeId(e.target.value)}
+              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            >
+              <option value="">Selecciona un tipo</option>
+              <option value="Caracter">Caracter</option>
+              <option value="Palabra">Palabra</option>
+              <option value="Frases">Frases</option>
+            </select>
+            <div className="flex gap-2">
+              <button
+                onClick={handleSearch}
+                disabled={isPending}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {isPending ? 'Buscando...' : 'Buscar'}
+              </button>
+              <button
+                onClick={handleClear}
+                className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+              >
+                Limpiar
+              </button>
             </div>
-        </ProtectedRoute>
-    );
+          </div>
+          {errorMessage && <p className="text-red-600 text-sm mt-2">{errorMessage}</p>}
+        </div>
+
+        {/* Lista de signos */}
+        {signs.length > 0 && (
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <h2 className="text-lg font-bold">Signos encontrados</h2>
+            <ul className="space-y-2">
+              {signs.map((sign) => (
+                <li
+                  key={sign.id}
+                  className={`p-2 border rounded-md cursor-pointer ${
+                    selectedSign?.id === sign.id ? 'bg-blue-100' : ''
+                  }`}
+                  onClick={() => setSelectedSign(sign)}
+                >
+                  {sign.name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Componentes habilitados al seleccionar un signo */}
+        {selectedSign && userId && levelId && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Componente CameraRecorder */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h2 className="text-lg font-bold">Grabar Video</h2>
+              <p>Si tiene dudas de como hacer el signo elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el signo y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
+              <CameraRecorder
+                name={selectedSign.name} // Nombre del signo seleccionado
+                idSign={selectedSign.id} // ID del signo seleccionado
+                idUser={userId} // ID del usuario autenticado
+                levelId={levelId} // Nivel del usuario autenticado
+                type={selectedSign.type} // Tipo del signo seleccionado
+              />
+            </div>
+
+            {/* Componente ExampleVideo */}
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h2 className="text-lg font-bold">Video de Ejemplo</h2>
+              <ExampleVideo
+                name={selectedSign.name}
+                meaning={selectedSign.meaning}
+                videoPath={selectedSign.videoPath}
+                reference={selectedSign.reference}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </ProtectedRoute>
+  );
 };
 
 export default SendSignsPage;

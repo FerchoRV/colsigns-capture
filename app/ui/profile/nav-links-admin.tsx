@@ -14,7 +14,7 @@ import clsx from 'clsx';
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   
-  { name: 'Registrar usuario', href: '/profile/register', icon: UsersIcon },
+  { name: 'Administrar usuarios', href: '/profile/admin-users', icon: UsersIcon },
   { name: 'Administrar contribuciones', href: '/profile/admin-contributions', icon: VideoCameraIcon },
   { name: 'Administrar signos', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
 ];
