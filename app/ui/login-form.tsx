@@ -26,7 +26,7 @@ export default function LoginForm() {
       const userCredential: UserCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
 
-      console.log("Usuario autenticado con Google:", user);
+      //console.log("Usuario autenticado con Google:", user);
 
       // 🔹 Verificar si es la primera vez que inicia sesión
       const userDocRef = doc(db, 'users', user.uid);
