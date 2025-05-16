@@ -34,7 +34,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />   
-      <p className="text-gray-700">4. Al llegar a este punto ya puedes empezar a compartir tus videos de signos serán parte del conjunto de datos de entrenamiento una vez sean verificados, y abras aportado a esta iniciativa, para hacer esto debes presionar el botón llamado “Enviar signos” esta se llevara a la siguiente interfaz:</p>
+      <p className="text-gray-700">4. Al llegar a este punto ya puedes empezar a compartir tus videos de signos que serán parte del conjunto de datos de entrenamiento una vez sean verificados, para hacer esto debes presionar el botón llamado “Enviar signos” esta se llevará a la siguiente interfaz:</p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -58,7 +58,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">6. Una vez selecciones el tipo de signo debes presionar el botón buscar y el sistema te traerá todos los signos disponibles para el tipo de signos seleccionado como se ve continuación:</p>
+      <p className="text-gray-700">6. Una vez selecciones el tipo de signo puedes dar en el botón buscar, y este te tarra todos los signos disponibles en esa categorías, si deseas filtrar más puedes agregar una letra de la A-Z y de esta manera el sistema solo te mostrara los signos que comiencen por esta como se ve a continuación: </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -82,7 +82,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">8. Al presionar los botones de Ver Ejemplo y Encender Cámara la interfaz cambia como se puede ver en la siguiente imagen, y se habilita el botón de Iniciar Grabación, una vez estes listo y hayas practicado presionar este botón e inmediatamente el sistema comienza a grabar el video se detiene automáticamente. </p>
+      <p className="text-gray-700">8. Al presionar los botones de Ver Ejemplo y Encender Cámara la interfaz cambia como se puede ver en la siguiente imagen, y se habilita el botón de Iniciar Grabación y el de Apagar Cámara. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -94,7 +94,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">9. Una vez el video se haya grabado el sistema te mostrara una vista y tienes dos opciones Eliminar lo cual no enviara ninguna información al sistema y puede volver a grabar, o Aceptar para que la información y tu video se envíe al sistema. </p>
+      <p className="text-gray-700">9. Una vez estes listo y hayas practicado el signo a enviar presiona el botón Iniciar Grabación el sistema indica una cuenta regresiva como se ve en la siguiente imagen para que te prepares una vez termina el conteo comienza a grabar y se detiene automáticamente para signos de caracteres el tiempo es de 3 segundos y para palabras y frases es de 5 segundos. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -103,10 +103,10 @@ export default function HelpPage() {
           width={500}
           height={500}          
           className="w-1/2 h-auto rounded-lg shadow-md mb-4"
-        />        
+        />
       </div>
       <br />
-      <p className="text-gray-700">10. Una vez aceptes el video el sistema te mostrará un mensaje de confirmación a la cual presionar aceptar y te devolverá a la interfaz del paso 8, y puede seguir enviando videos del mismo signos o si quieres enviar un nuevo signos debes presionar el botón limpiar y volver hacer los todo nuevamente desde el paso 4. </p>
+      <p className="text-gray-700">10. Una vez el video este grabado el sistema te mostrara una vista previa y tienes dos opciones Eliminar lo cual no enviara ninguna información al sistema y puede volver a grabar, o Aceptar para que la información y tu video se envíe al sistema. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -118,7 +118,19 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">11. Por último, puedes dirigirte a la sección de Contribuciones en donde se mostrarán todos tus videos compartidos, y el estado de ellos, cabe resaltar que solo los videos verificados son los que aran parte del conjunto de datos, esto se verifica por medio de una comparación entre el enviado y el video de ejemplo, o si el usuario tiene un nivel 1 o experto en manejo de signos.</p>
+      <p className="text-gray-700">11. Una vez aceptes el video el sistema te mostrará un mensaje de confirmación a la cual presionar aceptar y te devolverá a la interfaz del paso 8, y puede seguir enviando videos del mismo signo o si quieres enviar un nuevo signo debes presionar el botón limpiar y volver hacer los todo nuevamente desde el paso 4. </p>
+      <br />
+      <div className="flex justify-center">
+        <Image
+          src="/information-resources/send-sign-8-r.jpg"
+          alt="send-sign"
+          width={500}
+          height={500}          
+          className="w-1/2 h-auto rounded-lg shadow-md mb-4"
+        />        
+      </div>
+      <br />
+      <p className="text-gray-700">12. Por último, puedes dirigirte a la sección de Contribuciones en donde se mostrarán todos tus videos compartidos, y el estado de ellos, cabe resaltar que solo los videos verificados son los que aran parte del conjunto de datos, esto se verifica por medio de una comparación entre el enviado y el video de ejemplo, o si el usuario tiene un nivel 1 o experto en manejo de signos.</p>
       <br />
       <div className="flex justify-center">
         <Image

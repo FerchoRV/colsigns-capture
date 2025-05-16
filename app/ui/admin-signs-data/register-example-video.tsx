@@ -39,7 +39,7 @@ export default function RegisterExampleVideoForm() {
       const snapshot = await uploadBytes(storageRef, file);
       const downloadURL = await getDownloadURL(snapshot.ref);
 
-      console.log('✅ Archivo subido correctamente:', downloadURL);
+      //console.log('✅ Archivo subido correctamente:', downloadURL);
 
       // Guardar los datos en Firestore
       const videoExampleCollection = collection(db, 'video_example');

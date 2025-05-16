@@ -26,6 +26,7 @@ const SendSignsPage: React.FC = () => {
   const [isPending, setIsPending] = useState(false);
   const [userId, setUserId] = useState<string | null>(null); // ID del usuario autenticado
   const [levelId, setLevelId] = useState<string | null>(null); // Nivel del usuario autenticado
+  const [startsWith, setStartsWith] = useState(''); // Letra inicial del signo
 
   // Obtener el usuario autenticado y su nivel desde Firestore
   useEffect(() => {
@@ -95,7 +96,18 @@ const SendSignsPage: React.FC = () => {
     setSigns([]);
     setSelectedSign(null);
     setErrorMessage(null);
+    setStartsWith(''); // Limpiar la letra también
   };
+
+  const getRecordingDuration = (type: string) => {
+  if (type === 'Caracter') return 3000; // 3 segundos
+  if (type === 'Palabra' || type === 'Frases') return 5000; // 5 segundos
+  return 5000; // Valor por defecto
+  };
+
+  const filteredSigns = startsWith
+    ? signs.filter(sign => sign.name?.toUpperCase().startsWith(startsWith))
+    : signs;
 
   return (
     <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
@@ -118,6 +130,24 @@ const SendSignsPage: React.FC = () => {
               <option value="Palabra">Palabra</option>
               <option value="Frases">Frases</option>
             </select>
+            <div>
+              <label htmlFor="startsWith" className="block text-sm font-medium text-gray-700">
+                ¿Con qué letra empieza? (A-Z, Ñ)
+              </label>
+              <input
+                id="startsWith"
+                type="text"
+                maxLength={1}
+                value={startsWith}
+                onChange={(e) => {
+                  // Solo permitir letras A-Z y Ñ, mayúsculas
+                  const val = e.target.value.toUpperCase();
+                  if (/^[A-ZÑ]?$/.test(val)) setStartsWith(val);
+                }}
+                className="block w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder=""
+              />
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={handleSearch}
@@ -138,22 +168,29 @@ const SendSignsPage: React.FC = () => {
         </div>
 
         {/* Lista de signos */}
-        {signs.length > 0 && (
+        {filteredSigns.length > 0 && (
           <div className="bg-gray-50 p-4 rounded-lg">
             <h2 className="text-lg font-bold">Signos encontrados</h2>
-            <ul className="space-y-2">
-              {signs.map((sign) => (
-                <li
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
+              {filteredSigns.map((sign) => (
+                <div
                   key={sign.id}
-                  className={`p-2 border rounded-md cursor-pointer ${
-                    selectedSign?.id === sign.id ? 'bg-blue-100' : ''
+                  className={`p-2 border rounded-md cursor-pointer text-center transition-colors ${
+                    selectedSign?.id === sign.id ? 'bg-blue-100' : 'bg-white'
                   }`}
                   onClick={() => setSelectedSign(sign)}
                 >
                   {sign.name}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Mensaje si no hay signos para la letra seleccionada */}
+        {signs.length > 0 && filteredSigns.length === 0 && startsWith && (
+          <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg mt-2 text-center">
+            No hay signos de palabras o frases que comiencen por la letra seleccionada.
           </div>
         )}
 
@@ -170,6 +207,7 @@ const SendSignsPage: React.FC = () => {
                 idUser={userId} // ID del usuario autenticado
                 levelId={levelId} // Nivel del usuario autenticado
                 type={selectedSign.type} // Tipo del signo seleccionado
+                duration={getRecordingDuration(selectedSign.type)}
               />
             </div>
 
