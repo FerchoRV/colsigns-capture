@@ -34,7 +34,7 @@ const ProfilePage: React.FC = () => {
   
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            console.log("Datos del usuario obtenidos de Firestore:", userData);
+            //console.log("Datos del usuario obtenidos de Firestore:", userData);
             if (userData && userData.firstName && userData.lastName && userData.levelId) {
               setUserData(userData as UserData); // Cast to UserData after validation
             } else {

@@ -24,7 +24,7 @@ export default function SideNav() {
 
           if (userDoc.exists()) {
             const userData = userDoc.data();
-            console.log("Datos del usuario obtenidos de Firestore:", userData);
+            //console.log("Datos del usuario obtenidos de Firestore:", userData);
 
             // Asegúrate de que roleId sea un número
             const roleId = userData.roleId ? parseInt(userData.roleId, 10) : undefined;
