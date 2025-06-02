@@ -200,7 +200,7 @@ const SendSignsPage: React.FC = () => {
             {/* Componente CameraRecorder */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h2 className="text-lg font-bold">Grabar Video</h2>
-              <p>Si tiene dudas de como hacer el signo elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el signo y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
+              <p>Si tiene dudas de comó hacer el signo elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el signo y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
               <CameraRecorder
                 name={selectedSign.name} // Nombre del signo seleccionado
                 idSign={selectedSign.id} // ID del signo seleccionado
