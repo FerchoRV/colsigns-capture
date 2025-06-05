@@ -7,8 +7,8 @@ import { db } from "@/firebase/firebaseConfig";
 import { v4 as uuidv4 } from "uuid"; // Para generar un identificador único
 
 interface CameraRecorderProps {
-    name: string; // Nombre del signo
-    idSign: string; // ID del signo del video de ejemplo
+    name: string; // Nombre del seña
+    idSign: string; // ID del seña del video de ejemplo
     idUser: string; // ID del usuario que envía el video
     levelId: string; // Nivel del usuario que envía el video
     type: string; // Tipo del video de ejemplo

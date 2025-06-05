@@ -94,14 +94,14 @@ export default function UpdateExampleVideoForm() {
       <h1 className="text-xl font-bold">Actualizar Video de Ejemplo</h1>
       <div className="space-y-2">
         <label htmlFor="searchName" className="block text-sm font-medium text-gray-700">
-          Buscar por nombre del signo
+          Buscar por nombre del seña
         </label>
         <input
           id="searchName"
           type="text"
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
-          placeholder="Ingresa el nombre del signo"
+          placeholder="Ingresa el nombre del seña"
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
         <button
@@ -119,7 +119,7 @@ export default function UpdateExampleVideoForm() {
         <form onSubmit={handleSubmit} className="space-y-3">
           <div className="space-y-1">
             <label htmlFor="name" className="text-sm font-medium text-gray-700">
-              Nombre del signo
+              Nombre del seña
             </label>
             <input
               id="name"
@@ -133,7 +133,7 @@ export default function UpdateExampleVideoForm() {
           </div>
           <div className="space-y-1">
             <label htmlFor="meaning" className="text-sm font-medium text-gray-700">
-              Significado del signo
+              Significado del seña
             </label>
             <input
               id="meaning"
@@ -162,7 +162,7 @@ export default function UpdateExampleVideoForm() {
           </div>
           <div className="space-y-1">
             <label htmlFor="typeId" className="text-sm font-medium text-gray-700">
-              Tipo de signo
+              Tipo de seña
             </label>
             <select
               id="typeId"

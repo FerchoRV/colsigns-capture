@@ -19,7 +19,7 @@ const links = [
     href: '/profile/contributions',
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Enviar signos', href: '/profile/send-signs', icon: PaperAirplaneIcon },
+  { name: 'Enviar señas', href: '/profile/send-signs', icon: PaperAirplaneIcon },
 ];
 
 export default function NavLinksUser() {

@@ -7,7 +7,7 @@ const FormSendSigns: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 rounded-lg">
             {/* Primera sección */}
                 <div>
-                    <h1 className='text-center p-1'> Seleccionar Tipo de signo </h1>
+                    <h1 className='text-center p-1'> Seleccionar Tipo de seña </h1>
                     <div className="bg-white p-4 rounded-lg shadow-md">
                     <label htmlFor="typeSignId" className="text-sm font-medium text-gray-700">
                         
@@ -26,9 +26,9 @@ const FormSendSigns: React.FC = () => {
             </div>
             {/* Primera sección */}
             <div>
-                <h1 className='text-center p-1'> Seleccionar signo </h1>
+                <h1 className='text-center p-1'> Seleccionar seña </h1>
                 <div className="bg-white p-4 rounded-lg shadow-md">
-                lista de signos
+                lista de señas
                 </div>
             </div>
             {/* Segunda sección */}

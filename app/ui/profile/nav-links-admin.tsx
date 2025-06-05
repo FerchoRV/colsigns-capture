@@ -16,7 +16,7 @@ const links = [
   
   { name: 'Administrar usuarios', href: '/profile/admin-users', icon: UsersIcon },
   { name: 'Administrar contribuciones', href: '/profile/admin-contributions', icon: VideoCameraIcon },
-  { name: 'Administrar signos', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
+  { name: 'Administrar señas', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
 ];
 
 export default function NavLinksAdmin() {

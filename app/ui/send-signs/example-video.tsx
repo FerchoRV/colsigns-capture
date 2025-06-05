@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 
 interface ExampleVideoProps {
-    name: string; // Nombre del signo
-    meaning: string; // Significado del signo
+    name: string; // Nombre del seña
+    meaning: string; // Significado del seña
     videoPath: string; // URL del video
     reference: string; // Enlace a más información
 }
@@ -14,8 +14,8 @@ const ExampleVideo: React.FC<ExampleVideoProps> = ({ name, meaning, videoPath, r
 
     return (
         <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-lg shadow-md w-full">
-            {/* Información del signo */}
-            <h3 className="text-lg font-bold">Nombre Signo: {name}</h3>
+            {/* Información del seña */}
+            <h3 className="text-lg font-bold">Nombre seña: {name}</h3>
             <p className="text-sm text-gray-700">Significado: {meaning}</p>
 
             {/* Enlace a más información */}

@@ -67,7 +67,7 @@ export default function RegisterExampleVideoForm() {
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="space-y-1">
         <label htmlFor="name" className="text-sm font-medium text-gray-700">
-          Nombre del signo
+          Nombre del seña
         </label>
         <input
           id="name"
@@ -79,7 +79,7 @@ export default function RegisterExampleVideoForm() {
       </div>
       <div className="space-y-1">
         <label htmlFor="meaning" className="text-sm font-medium text-gray-700">
-          Significado del signo
+          Significado del seña
         </label>
         <input
           id="meaning"
@@ -117,7 +117,7 @@ export default function RegisterExampleVideoForm() {
       </div>
       <div className="space-y-1">
         <label htmlFor="typeId" className="text-sm font-medium text-gray-700">
-          Tipo de signo
+          Tipo de seña
         </label>
         <select
           id="typeId"

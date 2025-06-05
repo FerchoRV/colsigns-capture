@@ -12,7 +12,7 @@ export default function SearchExampleVideoPage() {
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
         <div className="flex flex-col justify-center gap-6 rounded-lg bg-gray-50 px-6 py-10 md:w-2/5 md:px-20">
           <p>
-            <strong>Buscar Video, </strong> esta seccion es para buscar la infromacion de videos de ejemplo de los signos colombianos que se desan capturar {' '}
+            <strong>Buscar Video, </strong> esta seccion es para buscar la infromacion de videos de ejemplo de los señas colombianos que se desan capturar {' '}
           </p>
           <Link
             href="/profile/admin-signs-data"

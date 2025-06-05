@@ -7,7 +7,7 @@ import { db } from '@/firebase/firebaseConfig';
 import CameraRecorder from '@/app/ui/send-signs/camera-recorder';
 import ExampleVideo from '@/app/ui/send-signs/example-video';
 
-// Define la interfaz para los signos
+// Define la interfaz para los señas
 interface Sign {
   id: string;
   name: string;
@@ -19,14 +19,14 @@ interface Sign {
 }
 
 const SendSignsPage: React.FC = () => {
-  const [typeId, setTypeId] = useState(''); // Tipo de signo seleccionado
-  const [signs, setSigns] = useState<Sign[]>([]); // Lista de signos obtenidos
-  const [selectedSign, setSelectedSign] = useState<Sign | null>(null); // Signo seleccionado
+  const [typeId, setTypeId] = useState(''); // Tipo de seña seleccionado
+  const [signs, setSigns] = useState<Sign[]>([]); // Lista de señas obtenidos
+  const [selectedSign, setSelectedSign] = useState<Sign | null>(null); // seña seleccionado
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [userId, setUserId] = useState<string | null>(null); // ID del usuario autenticado
   const [levelId, setLevelId] = useState<string | null>(null); // Nivel del usuario autenticado
-  const [startsWith, setStartsWith] = useState(''); // Letra inicial del signo
+  const [startsWith, setStartsWith] = useState(''); // Letra inicial del seña
 
   // Obtener el usuario autenticado y su nivel desde Firestore
   useEffect(() => {
@@ -54,10 +54,10 @@ const SendSignsPage: React.FC = () => {
     fetchUserData();
   }, []);
 
-  // Buscar signos por tipo y estado activo
+  // Buscar señas por tipo y estado activo
   const handleSearch = async () => {
     if (!typeId.trim()) {
-      setErrorMessage('Por favor selecciona un tipo de signo.');
+      setErrorMessage('Por favor selecciona un tipo de seña.');
       return;
     }
 
@@ -80,11 +80,11 @@ const SendSignsPage: React.FC = () => {
 
       setSigns(signsList);
       if (signsList.length === 0) {
-        setErrorMessage('No se encontraron signos con el tipo seleccionado.');
+        setErrorMessage('No se encontraron señas con el tipo seleccionado.');
       }
     } catch (error) {
-      console.error('Error buscando los signos:', error);
-      setErrorMessage('Error buscando los signos.');
+      console.error('Error buscando los señas:', error);
+      setErrorMessage('Error buscando los señas.');
     } finally {
       setIsPending(false);
     }
@@ -112,12 +112,12 @@ const SendSignsPage: React.FC = () => {
   return (
     <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
       <div className="flex flex-col gap-4 p-4">
-        {/* Buscar signos */}
+        {/* Buscar señas */}
         <div className="bg-gray-50 p-4 rounded-lg">
-          <h1 className="text-xl font-bold">Buscar Signos</h1>
+          <h1 className="text-xl font-bold">Buscar señas</h1>
           <div className="space-y-2">
             <label htmlFor="typeId" className="block text-sm font-medium text-gray-700">
-              Tipo de signo
+              Tipo de seña
             </label>
             <select
               id="typeId"
@@ -167,10 +167,10 @@ const SendSignsPage: React.FC = () => {
           {errorMessage && <p className="text-red-600 text-sm mt-2">{errorMessage}</p>}
         </div>
 
-        {/* Lista de signos */}
+        {/* Lista de señas */}
         {filteredSigns.length > 0 && (
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h2 className="text-lg font-bold">Signos encontrados</h2>
+            <h2 className="text-lg font-bold">señas encontrados</h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
               {filteredSigns.map((sign) => (
                 <div
@@ -187,26 +187,26 @@ const SendSignsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Mensaje si no hay signos para la letra seleccionada */}
+        {/* Mensaje si no hay señas para la letra seleccionada */}
         {signs.length > 0 && filteredSigns.length === 0 && startsWith && (
           <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg mt-2 text-center">
-            No hay signos de palabras o frases que comiencen por la letra seleccionada.
+            No hay señas de palabras o frases que comiencen por la letra seleccionada.
           </div>
         )}
 
-        {/* Componentes habilitados al seleccionar un signo */}
+        {/* Componentes habilitados al seleccionar un seña */}
         {selectedSign && userId && levelId && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {/* Componente CameraRecorder */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h2 className="text-lg font-bold">Grabar Video</h2>
-              <p>Si tiene dudas de comó hacer el signo elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el signo y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
+              <p>Si tiene dudas de comó hacer el seña elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el seña y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
               <CameraRecorder
-                name={selectedSign.name} // Nombre del signo seleccionado
-                idSign={selectedSign.id} // ID del signo seleccionado
+                name={selectedSign.name} // Nombre del seña seleccionado
+                idSign={selectedSign.id} // ID del seña seleccionado
                 idUser={userId} // ID del usuario autenticado
                 levelId={levelId} // Nivel del usuario autenticado
-                type={selectedSign.type} // Tipo del signo seleccionado
+                type={selectedSign.type} // Tipo del seña seleccionado
                 duration={getRecordingDuration(selectedSign.type)}
               />
             </div>

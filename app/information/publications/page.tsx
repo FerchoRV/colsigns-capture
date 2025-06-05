@@ -16,13 +16,13 @@ export default function PublicationsPage() {
         </thead>
         <tbody>
           <tr>
-            <td className="border border-gray-300 px-4 py-2">Desarrollo de sistema informático para comunicación de personas sordas y oyentes implementando inteligencia artificial (Interprete lenguaje de señas colombiano)</td>
+            <td className="border border-gray-300 px-4 py-2">Desarrollo de sistema informático para comunicación de personas sordas y oyentes implementando inteligencia artificial (Interprete lengua de señas colombiano)</td>
             <td className="border border-gray-300 px-4 py-2">Mundo FESC</td>
             <td className="border border-gray-300 px-4 py-2">EN REVISIÓN FINAL</td>
             <td className="border border-gray-300 px-4 py-2"><a href="https://www.fesc.edu.co/Revistas/OJS/index.php/mundofesc" target="_blank" rel="noopener noreferrer">No disponible</a></td>
           </tr>
           <tr>
-            <td className="border border-gray-300 px-4 py-2">Redes neuronales LSTM para el reconocimiento de lenguaje de signos colombianos estáticos(letras) y dinámicos(palabras).</td>
+            <td className="border border-gray-300 px-4 py-2">Redes neuronales LSTM para el reconocimiento de lengua de señas colombianos estáticos(letras) y dinámicos(palabras).</td>
             <td className="border border-gray-300 px-4 py-2">Revista Facultad de Ingeniería</td>
             <td className="border border-gray-300 px-4 py-2">ACEPTADO PARA PUBLICACIÓN</td>
             <td className="border border-gray-300 px-4 py-2"><a href="https://revistas.uptc.edu.co/index.php/ingenieria" target="_blank" rel="noopener noreferrer">No disponible</a></td>
