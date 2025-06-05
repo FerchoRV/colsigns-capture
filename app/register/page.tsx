@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import RegisterDataUserForm from '@/app/ui/profile/data-user-form';
+import RegisterDataUserForm from '@/app/ui/register/data-user-form';
 import Link from 'next/link';
 import ColsingLogo from '@/app/ui/colsing-logo';
  
