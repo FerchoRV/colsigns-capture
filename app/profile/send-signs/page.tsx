@@ -1,13 +1,13 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import ProtectedRoute from "../../components/ProtectedRoute";
-import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, orderBy } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '@/firebase/firebaseConfig';
 import CameraRecorder from '@/app/ui/send-signs/camera-recorder';
 import ExampleVideo from '@/app/ui/send-signs/example-video';
 
-// Define la interfaz para los señas
+// Define la interfaz para las señas
 interface Sign {
   id: string;
   name: string;
@@ -69,14 +69,15 @@ const SendSignsPage: React.FC = () => {
       const q = query(
         videoExampleCollection,
         where('type', '==', typeId),
-        where('status', '==', 'activo')
+        where('status', '==', 'activo'),
+        orderBy('name') // <-- Agrega esta línea para ordenar alfabéticamente por nombre
       );
       const querySnapshot = await getDocs(q);
 
       const signsList = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      })) as Sign[]; // Asegúrate de que los datos coincidan con la interfaz
+      })) as Sign[];
 
       setSigns(signsList);
       if (signsList.length === 0) {
