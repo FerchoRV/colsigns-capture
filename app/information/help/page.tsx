@@ -7,7 +7,7 @@ export default function HelpPage() {
       <br />
       <p className="text-gray-700">Esta iniciativa espera entregar una solución que apoye los procesos de comunicación entre personas sordas y oyentes sin conocimiento en lengua de señas, además de hacer conciencia que para una inclusión social de personas sordas debemos interesarnos en este mecanismo de comunicación.</p>
       <br />
-      <p className="text-gray-700">Y todos pueden ser parte inicialmente en la captura de datos para entrenar modelos de inteligencia artificial ya que se quiere mejorar la capacidad actual de los modelos y estos se consigue con grandes cantidades de información representativa de señas colombianos, para esto puedes seguir los siguientes pasos:</p>
+      <p className="text-gray-700">Y todos pueden ser parte inicialmente en la captura de datos para entrenar modelos de inteligencia artificial ya que se quiere mejorar la capacidad actual de los modelos y estos se consigue con grandes cantidades de información representativa de señas colombianas, para esto puedes seguir los siguientes pasos:</p>
       <br />
       <p className="text-gray-700">1. Inicia sesión en el sistema actualmente solo se permite iniciar sesión con Google. <a href="/login" className="text-blue-500 hover:underline">Iniciar sesión</a></p>
       <br />      
@@ -58,7 +58,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">6. Una vez selecciones el tipo de seña puedes dar en el botón buscar, y este te tarra todos los señas disponibles en esa categorías, si deseas filtrar más puedes agregar una letra de la A-Z y de esta manera el sistema solo te mostrara los señas que comiencen por esta como se ve a continuación: </p>
+      <p className="text-gray-700">6. Una vez selecciones el tipo de seña puedes dar en el botón buscar, y este te tarra todos los señas disponibles en esa categorías, si deseas filtrar más puedes agregar una letra de la A-Z y de esta manera el sistema solo te mostrara las señas que comiencen por esta como se ve a continuación: </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -70,7 +70,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">7. De la lista de señas que te entregue el sistema debes elegir uno y darle clic sobre él, esto te permitirá acceso al módulo de grabar y de ver ejemplo del seña seleccionado como se ve en la siguiente imagen; se recomienda ver el ejemplo del seña para personas sin experiencia en estos, y practiquen antes de enviar el señas y cuando estén listo hacer su respectiva contribución, para ver el ejemplo solo debes presionar el botón Ver Ejemplo, y para grabar oprimes el botón Encender Cámara, este pedirá permisos para acceder a tu cámara presionar permitir y puedes empezar a grabar. </p>
+      <p className="text-gray-700">7. De la lista de señas que te entregue el sistema debes elegir uno y darle clic sobre él, esto te permitirá acceso al módulo de grabar y de ver el ejemplo de la seña seleccionada como se ve en la siguiente imagen; se recomienda ver el ejemplo de la seña para personas sin experiencia en estos, y practiquen antes de enviar sus videos, para ver el ejemplo solo debes presionar el botón Ver Ejemplo, y para grabar oprimes el botón Encender Cámara, este pedirá permisos para acceder a tu cámara presionar permitir y puedes empezar a grabar. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -94,7 +94,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">9. Una vez estes listo y hayas practicado el seña a enviar presiona el botón Iniciar Grabación el sistema indica una cuenta regresiva como se ve en la siguiente imagen para que te prepares una vez termina el conteo comienza a grabar y se detiene automáticamente para señas de caracteres el tiempo es de 3 segundos y para palabras y frases es de 5 segundos. </p>
+      <p className="text-gray-700">9. Una vez estes listo y hayas practicado la seña presiona el botón Iniciar Grabación el sistema indica una cuenta regresiva como se ve en la siguiente imagen para que te prepares una vez termina el conteo comienza a grabar y se detiene automáticamente para señas de caracteres el tiempo es de 3 segundos y para palabras y frases es de 5 segundos. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -118,7 +118,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">11. Una vez aceptes el video el sistema te mostrará un mensaje de confirmación a la cual presionar aceptar y te devolverá a la interfaz del paso 8, y puede seguir enviando videos del mismo seña o si quieres enviar un nuevo seña debes presionar el botón limpiar y volver hacer los todo nuevamente desde el paso 4. </p>
+      <p className="text-gray-700">11. Una vez aceptes el video el sistema te mostrará un mensaje de confirmación a la cual presionar aceptar y te devolverá a la interfaz del paso 8, y puede seguir enviando videos de la misma seña o si quieres enviar una nueva debes presionar el botón limpiar y volver hacer nuevamente todo desde el paso 4. </p>
       <br />
       <div className="flex justify-center">
         <Image
@@ -142,7 +142,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">Con esto puede ser arte de esta iniciativa y quien sabe y aprendas algunos lenguas de señas, todos los videos de ejemplo proporcionados cuentan con un enlace directo al creador por si requieren mas información sobre el lengua de señas colombiano. Si deseas contribuir de otra manera no dudes en ponerte en contacto con nosotros por medio del correo 
+      <p className="text-gray-700">Con esto puede ser arte de esta iniciativa y quien sabe y aprendas algunas señas, todos los videos de ejemplo proporcionados cuentan con un enlace directo al creador por si requieren mas información sobre la lengua de señas colombiana. Si deseas contribuir de otra manera no dudes en ponerte en contacto con nosotros por medio del correo 
         {' '}
                 <a
           href="mailto:diegoferivera@unicauca.edu.co"

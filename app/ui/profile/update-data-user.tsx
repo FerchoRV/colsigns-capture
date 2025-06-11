@@ -109,7 +109,7 @@ export default function UpdateDataUserForm() {
       </div>
       <div className="space-y-1">
         <label htmlFor="typeId" className="text-sm font-medium text-gray-700">
-          Nivel en manejo de señas colombianos
+          Nivel en manejo de señas colombianas
         </label>
         <select
           id="typeId"

@@ -150,7 +150,7 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name, idSign, idUser, l
 
     return (
         <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-semibold">Tiempo de grabación: {duration/1000} segundos</h2>
+            <h2 className="text-base font-medium">Tiempo de grabación: {duration/1000} segundos</h2>
             {/* Botón para activar/desactivar la cámara */}
             {!isCameraOn ? (
                 <button

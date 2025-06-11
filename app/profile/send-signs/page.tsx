@@ -170,7 +170,7 @@ const SendSignsPage: React.FC = () => {
         {/* Lista de señas */}
         {filteredSigns.length > 0 && (
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h2 className="text-lg font-bold">señas encontrados</h2>
+            <h2 className="text-lg font-bold">Señas encontradas</h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
               {filteredSigns.map((sign) => (
                 <div
@@ -200,7 +200,7 @@ const SendSignsPage: React.FC = () => {
             {/* Componente CameraRecorder */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h2 className="text-lg font-bold">Grabar Video</h2>
-              <p>Si tiene dudas de comó hacer el seña elegido revisa el ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo el seña y se debe grabar de la cintura hacia arriba similar a como el video de ejemplo.</p>
+              <p>Si tiene dudas de comó hacer la seña elegida revisa el video de ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo la seña y se debe grabar de la cintura hacia arriba similar al video de ejemplo.</p>
               <CameraRecorder
                 name={selectedSign.name} // Nombre del seña seleccionado
                 idSign={selectedSign.id} // ID del seña seleccionado

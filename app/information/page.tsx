@@ -13,7 +13,7 @@ export default function GeneralPage() {
       <br />
       <h1 className="text-2xl font-bold text-blue-500">¿Qué se ha conseguido hasta ahora?</h1>
       <br />
-      <p className="text-gray-700">Principal mente se ha conseguido experimentar con técnicas de inteligencia artificial para generar modelos de reconocimiento de señas colombianos, se han conseguido modelos con hasta el 90% de precisión para identificar en promedio 28 señas independientes, tanto para señas estáticos como es el abecedario y dinámicos como son los señas que representan palabras, como se ve a continuación:</p>
+      <p className="text-gray-700">Principal mente se ha conseguido experimentar con técnicas de inteligencia artificial para generar modelos de reconocimiento de señas colombianas, se han conseguido modelos con hasta el 90% de precisión para identificar en promedio 28 señas independientes, tanto para señas estáticas como es el abecedario y dinámicas como son los señas que representan palabras, como se ve a continuación:</p>
       <br />
       <div className="flex flex-col items-center">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 justify-center items-center">
@@ -26,7 +26,7 @@ export default function GeneralPage() {
               height={500}
               className="w-3/4 h-auto rounded-lg shadow-lg"
             />
-            <p className="mt-2 text-gray-700 text-center">Reconocimiento de señas estáticos(Abecedario)</p>
+            <p className="mt-2 text-gray-700 text-center">Reconocimiento de señas estáticas(Abecedario)</p>
           </div>
 
           {/* Segundo GIF */}
@@ -38,25 +38,25 @@ export default function GeneralPage() {
               height={500}
               className="w-3/4 h-auto rounded-lg shadow-lg"
             />            
-            <p className="mt-2 text-gray-700 text-center">Reconocimiento de señas dinámicos(Palabras)</p>
+            <p className="mt-2 text-gray-700 text-center">Reconocimiento de señas dinámicas(Palabras)</p>
           </div>
         </div>
       </div>
       <br />
       <p className="text-gray-700">
         Para más detalle de estos avances pueden dar clic{" "}
-        <a href="https://github.com/FerchoRV/LSTM-Reconocimiento-de-señas-colombianos" className="text-blue-500 underline" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/FerchoRV/LSTM-Reconocimiento-de-señas-colombianas" className="text-blue-500 underline" target="_blank" rel="noopener noreferrer">
           aquí
         </a>
       </p>
       <br />
       <h1 className="text-2xl font-bold text-blue-500">¿Qué se espera conseguir?</h1>
       <br />
-      <p className="text-gray-700">Se espera conseguir un modelo de reconocimiento de señas colombianos capaz de reconocer al menos los 100 señas fundamentales para una conversación, que permita desarrollar una herramienta que facilite la comunicación entre personas sordas y oyentes, además de proveer a la comunidad científica un conjunto de datos como mas de 500 señas colombianos para quienes les interés entrenar estrategias de inteligencia artificial y generar sus propios modelos.</p>
+      <p className="text-gray-700">Se espera conseguir un modelo de reconocimiento de señas colombianas capaz de reconocer al menos los 100 señas fundamentales para una conversación, que permita desarrollar una herramienta que facilite la comunicación entre personas sordas y oyentes, además de proveer a la comunidad científica un conjunto de datos como mas de 500 señas colombianas para quienes les interés entrenar estrategias de inteligencia artificial y generar sus propios modelos.</p>
       <br />
       <h1 className="text-2xl font-bold text-blue-500">¿Qué se está haciendo actualmente?</h1>
       <br />
-      <p className="text-gray-700">En la actualidad se esta haciendo la captura de datos para entrenar estrategias de inteligencia artificial, la meta es almacenar la información de mas de 500 señas colombianos por medio de videos que se comparte por medio de esta plataforma, además de que se va experimentando con los datos capturados para ir generando modelos con mayor capacidad de reconocimiento, junto a esto se está desarrollando un PMV llamado Colsign Interprete para validar el comportamiento de los modelos en un entorno real. </p>
+      <p className="text-gray-700">En la actualidad se esta haciendo la captura de datos para entrenar estrategias de inteligencia artificial, la meta es almacenar la información de mas de 500 señas colombianas por medio de videos que se comparte por medio de esta plataforma, además de que se va experimentando con los datos capturados para ir generando modelos con mayor capacidad de reconocimiento, junto a esto se está desarrollando un PMV llamado Colsign Interprete para validar el comportamiento de los modelos en un entorno real. </p>
       <br />
       <h1 className="text-2xl font-bold text-blue-500">Participantes</h1>
       <br />

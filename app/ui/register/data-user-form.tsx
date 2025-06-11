@@ -105,7 +105,7 @@ const RegisterDataUserForm: FC = () => {
         </div>
         <div>
           <label htmlFor="typeId" className="block text-sm font-medium text-gray-700 mb-1">
-            Nivel en manejo de señas colombianos
+            Nivel en manejo de señas colombianas
           </label>
           <select
             id="typeId"
