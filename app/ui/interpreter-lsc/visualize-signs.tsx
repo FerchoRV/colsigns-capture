@@ -1,15 +1,14 @@
 import React from "react";
+import VisualizeAlphabetComponent from "./visualize-alphabet";
 
 const VisualizeSignsPage: React.FC = () => {
   return (
     <main>
-      <h1>Visualizar señas</h1>
       <p>
-        Esta página permite visualizar las señas en formato de video o animación.
-        Puedes cargar un archivo de video o seleccionar una seña específica para
-        ver su representación visual.
+        Este módulo permite tiene como fin visualizar las señas que representan un mensaje de texto para poder trasmitir y comunicarse con personas sordas, actualmente solo está disponible el deletreo de palabras apoyado por videos de ejemplos de señas independientes.
       </p>
-      {/* Aquí puedes agregar más contenido, como un formulario para cargar videos o una lista de señas */}
+      <VisualizeAlphabetComponent />
+
     </main>
   );
 };
