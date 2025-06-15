@@ -13,7 +13,7 @@ import clsx from 'clsx';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  
+  { name: 'Interprete', href: '/profile/interpreter-lsc', icon: UsersIcon },
   { name: 'Administrar usuarios', href: '/profile/admin-users', icon: UsersIcon },
   { name: 'Administrar contribuciones', href: '/profile/admin-contributions', icon: VideoCameraIcon },
   { name: 'Administrar señas', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
