@@ -18,52 +18,43 @@ interface Contribution {
 }
 
 const ContributionsPage: React.FC = () => {
-  const [contributions, setContributions] = useState<Contribution[]>([]); // Lista de contribuciones del usuario
-  const [isLoading, setIsLoading] = useState(false); // Cambiado a false para que no cargue inicialmente
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // Mensaje de error
+  const [contributions, setContributions] = useState<Contribution[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [toDelete, setToDelete] = useState<Contribution | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState<string>(''); // Nuevo estado para el término de búsqueda
+  
+  // Estado para el texto que el usuario escribe en el input
+  const [searchTerm, setSearchTerm] = useState<string>(''); 
+  // Nuevo estado: término de búsqueda que dispara la consulta al presionar el botón
+  const [confirmedSearchTerm, setConfirmedSearchTerm] = useState<string>(''); 
 
-  // Estado para un debounce controlado
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-
-  // Efecto para aplicar el debounce al término de búsqueda
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500); // Debounce de 500ms
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [searchTerm]);
-
-  // Modificación clave aquí: el useEffect para cargar datos
+  // Este useEffect se encargará de realizar la consulta a Firebase
+  // SOLO cuando 'confirmedSearchTerm' cambie (es decir, cuando se presione el botón)
   useEffect(() => {
     const fetchContributions = async () => {
       setErrorMessage(null); // Limpiar errores previos
 
-      // Solo inicia la carga si hay un término de búsqueda (debounced)
-      if (!debouncedSearchTerm) {
+      // Solo inicia la carga y realiza la consulta si hay un término de búsqueda confirmado
+      if (!confirmedSearchTerm) {
         setContributions([]); // Limpia las contribuciones si el buscador está vacío
-        setIsLoading(false); // Asegúrate de que el estado de carga esté en false
-        return; // No hagas la consulta a Firebase si no hay término de búsqueda
+        setIsLoading(false); 
+        return; // No hagas la consulta a Firebase si no hay término de búsqueda confirmado
       }
 
-      setIsLoading(true); // Iniciar la carga solo si hay término de búsqueda
+      setIsLoading(true); // Iniciar la carga solo si hay término de búsqueda confirmado
 
       try {
         const auth = getAuth();
         const user = auth.currentUser;
 
         if (user) {
-          // Construye la consulta: debe coincidir con el ID del usuario Y el label
+          // Construye la consulta con ambos filtros: ID de usuario y el término de búsqueda confirmado
           const contributionsQuery = query(
             collection(db, 'sign_data'),
             where('id_user', '==', user.uid), // Filtrar por el ID del usuario autenticado
-            where('label', '==', debouncedSearchTerm.toLowerCase()) // Filtrar por el término de búsqueda (en minúsculas)
+            where('label', '==', confirmedSearchTerm.toLowerCase()) // Filtrar por el término de búsqueda confirmado (en minúsculas)
           );
 
           const querySnapshot = await getDocs(contributionsQuery);
@@ -85,7 +76,19 @@ const ContributionsPage: React.FC = () => {
     };
 
     fetchContributions();
-  }, [debouncedSearchTerm]); // El efecto se ejecuta cuando cambia el término de búsqueda debounced
+  }, [confirmedSearchTerm]); // EL EFECTO AHORA DEPENDE DE 'confirmedSearchTerm'
+
+  // Función para manejar el clic del botón de búsqueda
+  const handleSearchButtonClick = () => {
+    setConfirmedSearchTerm(searchTerm); // Actualiza el término de búsqueda que dispara la consulta
+  };
+
+  // Función para manejar la tecla Enter en el input de búsqueda
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSearchButtonClick();
+    }
+  };
 
 
   // Eliminar contribución y archivo de Storage (sin cambios)
@@ -108,7 +111,6 @@ const ContributionsPage: React.FC = () => {
         const fileRef = ref(storage, fileRefPath);
         await deleteObject(fileRef);
       }
-      // Actualiza la lista en el cliente, no recarga de Firestore
       setContributions((prev) => prev.filter((c) => c.id !== contribution.id));
       setSuccessMessage('Eliminado con éxito');
       setTimeout(() => setSuccessMessage(null), 2000);
@@ -131,15 +133,22 @@ const ContributionsPage: React.FC = () => {
       <div className="p-4">
         <h1 className="text-xl text-blue-500 font-bold mb-4">Mis Contribuciones</h1>
 
-        {/* Campo de búsqueda */}
-        <div className="mb-4">
+        {/* Campo de búsqueda y botón */}
+        <div className="mb-4 flex gap-2"> {/* Usamos flex y gap para alinear input y botón */}
           <input
             type="text"
-            placeholder="Buscar por etiqueta (seña)..."
-            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Nombre de la seña"
+            className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown} 
           />
+          <button
+            onClick={handleSearchButtonClick}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Buscar
+          </button>
         </div>
         
         {/* Mensaje de éxito */}
@@ -170,15 +179,15 @@ const ContributionsPage: React.FC = () => {
           </div>
         )}
 
-        {/* Modificación en la lógica de renderizado inicial */}
+        {/* Lógica de renderizado */}
         {isLoading ? (
           <p>Cargando contribuciones...</p>
         ) : errorMessage ? (
           <p className="text-red-500">{errorMessage}</p>
-        ) : (debouncedSearchTerm && contributions.length === 0) ? (
-          <p>No se encontraron contribuciones de la seña &quot;{debouncedSearchTerm}&quot;.</p>
-        ) : (!debouncedSearchTerm) ? (
-          <p>Introduce el nombre de la seña para ver tus contribuciones.</p>
+        ) : (confirmedSearchTerm && contributions.length === 0) ? (
+          <p>No se encontraron contribuciones con la seña &quot;{confirmedSearchTerm}&quot;.</p>
+        ) : (!confirmedSearchTerm) ? (
+          <p>Ingresa el nombre de la seña y presiona &quot;Buscar&quot; para ver tus contribuciones.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {contributions.map((contribution) => (
