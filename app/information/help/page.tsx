@@ -58,7 +58,7 @@ export default function HelpPage() {
         />        
       </div>
       <br />
-      <p className="text-gray-700">6. Una vez selecciones el tipo de seña puedes dar en el botón buscar, y este te tarra todos los señas disponibles en esa categorías, si deseas filtrar más puedes agregar una letra de la A-Z y de esta manera el sistema solo te mostrara las señas que comiencen por esta como se ve a continuación: </p>
+      <p className="text-gray-700">6. Una vez selecciones el tipo de seña puedes dar en el botón buscar, este traerá todas las señas disponibles en esa categorías, si deseas filtrar más puedes agregar una letra de la A-Z y de esta manera el sistema solo te mostrara las señas que comiencen por esta como se ve a continuación: </p>
       <br />
       <div className="flex justify-center">
         <Image

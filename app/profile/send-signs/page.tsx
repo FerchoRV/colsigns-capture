@@ -101,9 +101,9 @@ const SendSignsPage: React.FC = () => {
   };
 
   const getRecordingDuration = (type: string) => {
-  if (type === 'Caracter') return 3000; // 3 segundos
-  if (type === 'Palabra' || type === 'Frases') return 5000; // 5 segundos
-  return 5000; // Valor por defecto
+  if (type === 'Palabra' || type === 'Caracter') return 3000; // 3 segundos
+  if (type === 'Frases') return 5000; // 5 segundos
+  return 3000; // Valor por defecto
   };
 
   const filteredSigns = startsWith
