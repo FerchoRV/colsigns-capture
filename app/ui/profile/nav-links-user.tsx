@@ -3,7 +3,8 @@
 import {
   DocumentDuplicateIcon,
   UserIcon,
-  PaperAirplaneIcon
+  PaperAirplaneIcon,
+  WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -20,6 +21,7 @@ const links = [
     icon: DocumentDuplicateIcon,
   },
   { name: 'Enviar señas', href: '/profile/send-signs', icon: PaperAirplaneIcon },
+  { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
 ];
 
 export default function NavLinksUser() {
