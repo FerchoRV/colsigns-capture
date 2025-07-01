@@ -29,7 +29,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
                     activeComponent === 'signRecognizer' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-blue-500'
                 )}
             >
-                Texto a señas
+                Señas a texto
             </button>
             <button
                 onClick={() => setActiveComponent('visualizeSigns')}
@@ -38,7 +38,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
                     activeComponent === 'visualizeSigns' ? 'bg-blue-600' : 'bg-gray-400 hover:bg-blue-500'
                 )}
             >
-                Señas a texto
+                Texto a señas 
             </button>
 
             </div>
