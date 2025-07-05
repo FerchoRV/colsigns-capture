@@ -17,7 +17,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
             <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" strategy="beforeInteractive" />
             <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" strategy="beforeInteractive" />
 
-            <h1 className="text-2xl font-bold text-blue-500">Prototipo Interprete Colsign</h1>
+            <h1 className="text-2xl font-bold text-blue-500">Prototipo Interprete Colsign (En desarrollo)</h1>
 
             {/* Botones para alternar entre los componentes */}
             <div className='flex grid grid-cols-2 grid-grow-1 gap-2 w-full max-w-md'>

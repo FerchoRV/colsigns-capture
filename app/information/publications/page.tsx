@@ -3,7 +3,7 @@ export default function PublicationsPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold text-blue-500">Revistas indexadas</h1>
       <br />
-      <p className="text-gray-700">Este proyecto al estar vinculado a la investigación se han escritos diferentes artículos que se han sometido a revistas indexadas a continuación se comparte el resumen de estos documentos.</p>
+      <p className="text-gray-700">Durante la ejecución de este proyecto de investigación se espera escribir diferentes artículos para compartir de manera formal los resultados obtenidos, en este espacio se comparte el resumen de estos:</p>
       <br />
       <table className="table-auto border-collapse border border-gray-300 w-full text-gray-700">
         <thead>
@@ -16,16 +16,10 @@ export default function PublicationsPage() {
         </thead>
         <tbody>
           <tr>
-            <td className="border border-gray-300 px-4 py-2">Desarrollo de sistema informático para comunicación de personas sordas y oyentes implementando inteligencia artificial (Interprete lengua de señas colombiano)</td>
-            <td className="border border-gray-300 px-4 py-2">Mundo FESC</td>
-            <td className="border border-gray-300 px-4 py-2">EN REVISIÓN FINAL</td>
-            <td className="border border-gray-300 px-4 py-2"><a href="https://www.fesc.edu.co/Revistas/OJS/index.php/mundofesc" target="_blank" rel="noopener noreferrer">No disponible</a></td>
-          </tr>
-          <tr>
-            <td className="border border-gray-300 px-4 py-2">Redes neuronales LSTM para el reconocimiento de lengua de señas colombianas estáticas(letras) y dinámicas(palabras).</td>
+            <td className="border border-gray-300 px-4 py-2">Recognition of Colombian Sign Language using Neural Networks with Long- and Short-Term Memory</td>
             <td className="border border-gray-300 px-4 py-2">Revista Facultad de Ingeniería</td>
-            <td className="border border-gray-300 px-4 py-2">ACEPTADO PARA PUBLICACIÓN</td>
-            <td className="border border-gray-300 px-4 py-2"><a href="https://revistas.uptc.edu.co/index.php/ingenieria" target="_blank" rel="noopener noreferrer">No disponible</a></td>
+            <td className="border border-gray-300 px-4 py-2">Publicado</td>
+            <td className="underline text-blue-600 border border-gray-300 px-4 py-2"><a href="https://doi.org/10.19053/uptc.01211129.v34.n71.2025.18059" target="_blank" rel="noopener noreferrer">Ver</a></td>
           </tr>
         </tbody>
       </table>
