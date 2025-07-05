@@ -455,104 +455,111 @@ const SignRecognizer = () => {
   }, [isSequenceReadyToSend, isProcessingAPI, keypointsSequence, captureMode, sendKeypointsToAPI]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 w-full">
-      {/* Columna 1: Cámara y Canvas */}
-      <div className="relative w-full max-w-[640px] aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-gray-300">
-        {loadingError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-700 text-center p-4 z-10">
-            <p>{loadingError}</p>
-          </div>
-        )}
-        {cameraOn && extractingPoints && !loadingError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-blue-100 text-blue-600 text-center p-4 z-10">
-            <p className="font-semibold text-lg">Extrayendo puntos de control...</p>
-          </div>
-        )}
-        {!cameraOn && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 text-gray-600 text-center p-4 z-10">
-            <VideoCameraSlashIcon className="h-16 w-16 text-gray-500 mb-2" />
-            <p>Cámara Apagada</p>
-          </div>
-        )}
-        <video
-          ref={videoRef}
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          style={{ transform: 'scaleX(-1)' }}
-          autoPlay
-          playsInline
-          muted
-        />
-        <canvas
-          ref={canvasRef}
-          className="absolute top-0 left-0 w-full h-full"
-          width={640}
-          height={480}
-        />
-      </div>
+    <>
+      <h1 className="text-2xl font-bold text-blue-500">Instrucciones y recomendaciones</h1>
+      <p className="text-gray-700">Este módulo permite probar los modelos obtenidos en este proyecto, actualmente solo están disponibles dos uno para reconocer el abecedario y otro de palabras que actualmente solo tiene 28 señas básicas del diccionario básico de lengua de señas colombiana.</p>
+      <br />            
+      <p className="text-gray-700">Actualmente solo se permite enviar una seña a la vez para cada modelo, si el botón de encender Cámara no se hablita al cargar esta página recargue nuevamente, una vez la cámara este encendida y la imagen se vea con fluides presione cualquier botón entre Abecedario y Palabras, el sistema inmediatamente procesa 30 fotogramas y envía los puntos de control al sistema tenga en cuenta que en ningún momento se envía sus imágenes o video a los modelos ya que no son necesarios, luego espere unos segundo y recibir a su predicción de la seña, si desea enviar una nueva, recarga la página nuevamente para evitar conflictos.</p>
 
-      {/* Columna 2: Botones y datos */}
-      <div className="flex flex-col items-center justify-center gap-4">
-        <button
-          onClick={toggleCamera}
-          disabled={!mediaPipeLoaded}
-          className={`${
-            !mediaPipeLoaded
-              ? 'bg-gray-400 cursor-not-allowed'
-              : cameraOn
-              ? 'bg-red-600 hover:bg-red-700'
-              : 'bg-blue-600 hover:bg-blue-700'
-          } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
-        >
-          {cameraOn ? 'Apagar Cámara' : 'Encender Cámara'}
-        </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 w-full">
+        {/* Columna 1: Cámara y Canvas */}
+        <div className="relative w-full max-w-[640px] aspect-[4/3] rounded-xl overflow-hidden shadow-lg border border-gray-300">
+          {loadingError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-red-100 text-red-700 text-center p-4 z-10">
+              <p>{loadingError}</p>
+            </div>
+          )}
+          {cameraOn && extractingPoints && !loadingError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-blue-100 text-blue-600 text-center p-4 z-10">
+              <p className="font-semibold text-lg">Extrayendo puntos de control...</p>
+            </div>
+          )}
+          {!cameraOn && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100 text-gray-600 text-center p-4 z-10">
+              <VideoCameraSlashIcon className="h-16 w-16 text-gray-500 mb-2" />
+              <p>Cámara Apagada</p>
+            </div>
+          )}
+          <video
+            ref={videoRef}
+            className="absolute top-0 left-0 w-full h-full object-cover"
+            style={{ transform: 'scaleX(-1)' }}
+            autoPlay
+            playsInline
+            muted
+          />
+          <canvas
+            ref={canvasRef}
+            className="absolute top-0 left-0 w-full h-full"
+            width={640}
+            height={480}
+          />
+        </div>
 
-        <button
-          onClick={handleCaptureDeletreo}
-          disabled={!cameraOn || extractingPoints || captureMode !== 'none' || isProcessingAPI}
-          className={`${
-            cameraOn && !extractingPoints && captureMode === 'none' && !isProcessingAPI
-              ? 'bg-green-600 hover:bg-green-700'
-              : 'bg-gray-400 cursor-not-allowed'
-          } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
-        >
-          Abecedario
-        </button>
+        {/* Columna 2: Botones y datos */}
+        <div className="flex flex-col items-center justify-center gap-4">
+          <button
+            onClick={toggleCamera}
+            disabled={!mediaPipeLoaded}
+            className={`${
+              !mediaPipeLoaded
+                ? 'bg-gray-400 cursor-not-allowed'
+                : cameraOn
+                ? 'bg-red-600 hover:bg-red-700'
+                : 'bg-blue-600 hover:bg-blue-700'
+            } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
+          >
+            {cameraOn ? 'Apagar Cámara' : 'Encender Cámara'}
+          </button>
 
-        <button
-          onClick={handleCapturePalabras}
-          disabled={!cameraOn || extractingPoints || captureMode !== 'none' || isProcessingAPI}
-          className={`${
-            cameraOn && !extractingPoints && captureMode === 'none' && !isProcessingAPI
-              ? 'bg-purple-600 hover:bg-purple-700'
-              : 'bg-gray-400 cursor-not-allowed'
-          } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
-        >
-          Palabras
-        </button>
+          <button
+            onClick={handleCaptureDeletreo}
+            disabled={!cameraOn || extractingPoints || captureMode !== 'none' || isProcessingAPI}
+            className={`${
+              cameraOn && !extractingPoints && captureMode === 'none' && !isProcessingAPI
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-gray-400 cursor-not-allowed'
+            } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
+          >
+            Abecedario
+          </button>
 
-        {/* Indicador de Captura Activa */}
-        {captureMode !== 'none' && (
-            <p className="text-blue-500 font-semibold text-center">
-                Capturando '{captureMode}' ({keypointsSequence.length}/{SEQUENCE_LENGTH} fotogramas)
+          <button
+            onClick={handleCapturePalabras}
+            disabled={!cameraOn || extractingPoints || captureMode !== 'none' || isProcessingAPI}
+            className={`${
+              cameraOn && !extractingPoints && captureMode === 'none' && !isProcessingAPI
+                ? 'bg-purple-600 hover:bg-purple-700'
+                : 'bg-gray-400 cursor-not-allowed'
+            } text-white font-semibold px-6 py-2 rounded-lg shadow-md transition`}
+          >
+            Palabras
+          </button>
+
+          {/* Indicador de Captura Activa */}
+          {captureMode !== 'none' && (
+              <p className="text-blue-500 font-semibold text-center">
+                  Capturando '{captureMode}' ({keypointsSequence.length}/{SEQUENCE_LENGTH} fotogramas)
+              </p>
+          )}
+
+          {/* Indicador de Procesamiento de API */}
+          {isProcessingAPI && (
+            <p className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded-lg w-full text-center font-semibold">
+              Procesando respuesta de la API...
             </p>
-        )}
+          )}
 
-        {/* Indicador de Procesamiento de API */}
-        {isProcessingAPI && (
-          <p className="mt-4 p-4 bg-yellow-100 text-yellow-800 rounded-lg w-full text-center font-semibold">
-            Procesando respuesta de la API...
-          </p>
-        )}
-
-        {/* Mostrar Respuesta de la API */}
-        {apiResponse && !isProcessingAPI && (
-          <div className="mt-4 p-4 bg-gray-100 rounded-lg w-full text-sm break-all">
-            <h3 className="font-semibold text-lg mb-2">Predicción:</h3>
-            <p className="text-blue-600 font-bold">{apiResponse}</p>
-          </div>
-        )}
+          {/* Mostrar Respuesta de la API */}
+          {apiResponse && !isProcessingAPI && (
+            <div className="mt-4 p-4 bg-gray-100 rounded-lg w-full text-sm break-all">
+              <h3 className="font-semibold text-lg mb-2">Predicción:</h3>
+              <p className="text-blue-600 font-bold">{apiResponse}</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

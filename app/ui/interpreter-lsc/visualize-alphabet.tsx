@@ -71,7 +71,7 @@ const VisualizeAlphabetComponent: React.FC = () => {
           onClick={handleSearch}
           className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
         >
-          Buscar Videos
+          Ver señas
         </button>
 
         {/* Mostrar los resultados en tarjetas */}
