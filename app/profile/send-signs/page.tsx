@@ -1,7 +1,8 @@
-'use client';
-import React, { useState, useEffect } from 'react';
-import ProtectedRoute from "../../components/ProtectedRoute";
-import { collection, query, where, getDocs, doc, getDoc, orderBy } from 'firebase/firestore';
+"use client";
+import LabelsAlphabet from "@/app/ui/send-signs/labels-alphabet";
+import React, { useState, useEffect, useCallback } from 'react'; // Agregamos useCallback
+import ProtectedRoute from "../../components/ProtectedRoute"; // Mantener si lo usas para enrutamiento
+import { collection, query, where, getDocs, doc, getDoc, orderBy} from 'firebase/firestore'; // Importar 'or' si es necesario
 import { getAuth } from 'firebase/auth';
 import { db } from '@/firebase/firebaseConfig';
 import CameraRecorder from '@/app/ui/send-signs/camera-recorder';
@@ -18,15 +19,17 @@ interface Sign {
   reference?: string; // Opcional
 }
 
-const SendSignsPage: React.FC = () => {
-  const [typeId, setTypeId] = useState(''); // Tipo de seña seleccionado
+const PagesendSign: React.FC = () => {
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null); // Letra seleccionada del alfabeto
   const [signs, setSigns] = useState<Sign[]>([]); // Lista de señas obtenidos
-  const [selectedSign, setSelectedSign] = useState<Sign | null>(null); // seña seleccionado
+  const [selectedSign, setSelectedSign] = useState<Sign | null>(null); // Seña seleccionado
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const [userId, setUserId] = useState<string | null>(null); // ID del usuario autenticado
   const [levelId, setLevelId] = useState<string | null>(null); // Nivel del usuario autenticado
-  const [startsWith, setStartsWith] = useState(''); // Letra inicial del seña
+  
+  // *** Estado para controlar la visibilidad de CameraRecorder y ExampleVideo ***
+  const [showRecordingSections, setShowRecordingSections] = useState(false);
 
   // Obtener el usuario autenticado y su nivel desde Firestore
   useEffect(() => {
@@ -37,7 +40,6 @@ const SendSignsPage: React.FC = () => {
       if (user) {
         setUserId(user.uid); // Establecer el ID del usuario
 
-        // Obtener el nivel del usuario desde Firestore
         const userDocRef = doc(db, 'users', user.uid);
         const userDoc = await getDoc(userDocRef);
 
@@ -48,30 +50,41 @@ const SendSignsPage: React.FC = () => {
         }
       } else {
         console.error('No hay un usuario autenticado.');
+        // Considerar redirigir o mostrar un mensaje si no hay usuario
       }
     };
 
     fetchUserData();
   }, []);
 
-  // Buscar señas por tipo y estado activo
-  const handleSearch = async () => {
-    if (!typeId.trim()) {
-      setErrorMessage('Por favor selecciona un tipo de seña.');
+  // Función para buscar señas por la letra seleccionada y tipos
+  // Usamos useCallback para memoizar esta función
+  const fetchSignsByLetter = useCallback(async (letter: string) => {
+    if (!letter.trim()) {
+      setErrorMessage('Por favor, selecciona una letra para buscar señas.');
+      setSigns([]); // Limpiar señas si no hay letra
+      setSelectedSign(null); // Limpiar seña seleccionado
+      setShowRecordingSections(false); // Ocultar secciones de grabación
       return;
     }
 
     setIsPending(true);
     setErrorMessage(null);
+    setSigns([]); // Limpiar señas previos
+    setSelectedSign(null); // Limpiar seña seleccionado
+    setShowRecordingSections(false); // Ocultar secciones de grabación
 
     try {
       const videoExampleCollection = collection(db, 'video_example');
+      
+      // Consultar por "Palabra", "Caracter" o "Frases" usando el operador 'in'
       const q = query(
         videoExampleCollection,
-        where('type', '==', typeId),
+        where('type', 'in', ['Palabra', 'Caracter', 'Frases']), // 'in' permite filtrar por varios valores
         where('status', '==', 'activo'),
-        orderBy('name') // <-- Agrega esta línea para ordenar alfabéticamente por nombre
+        orderBy('name')
       );
+      
       const querySnapshot = await getDocs(q);
 
       const signsList = querySnapshot.docs.map((doc) => ({
@@ -79,9 +92,14 @@ const SendSignsPage: React.FC = () => {
         ...doc.data(),
       })) as Sign[];
 
-      setSigns(signsList);
-      if (signsList.length === 0) {
-        setErrorMessage('No se encontraron señas con el tipo seleccionado.');
+      // Filtrar en el cliente por la letra inicial después de obtener los tipos deseados
+      const filteredByLetter = signsList.filter(sign => 
+        sign.name?.toUpperCase().startsWith(letter.toUpperCase())
+      );
+
+      setSigns(filteredByLetter);
+      if (filteredByLetter.length === 0) {
+        setErrorMessage(`No se encontraron señas de palabras, caracteres o frases que comiencen con la letra "${letter}".`);
       }
     } catch (error) {
       console.error('Error buscando los señas:', error);
@@ -89,144 +107,120 @@ const SendSignsPage: React.FC = () => {
     } finally {
       setIsPending(false);
     }
+  }, []); // Dependencias vacías para useCallback ya que no usa estados/props que cambien
+
+  // Efecto para disparar la búsqueda cuando se selecciona una letra
+  useEffect(() => {
+    if (selectedLetter) {
+      fetchSignsByLetter(selectedLetter);
+    }
+  }, [selectedLetter, fetchSignsByLetter]); // selectedLetter y fetchSignsByLetter son dependencias
+
+  // Función para manejar la selección de una letra del alfabeto
+  const handleLetterSelect = (letter: string) => {
+    setSelectedLetter(letter);
+    // No reseteamos selectedSign aquí, se hace dentro de fetchSignsByLetter
+    // y tampoco mostramos las secciones de grabación hasta que se elija una seña específica.
   };
 
-  // Limpiar la búsqueda y los datos seleccionados
-  const handleClear = () => {
-    setTypeId('');
-    setSigns([]);
-    setSelectedSign(null);
-    setErrorMessage(null);
-    setStartsWith(''); // Limpiar la letra también
+  // Cuando se selecciona una seña de la lista
+  const handleSignSelect = (sign: Sign) => {
+    setSelectedSign(sign);
+    // Ahora activamos la visibilidad de los componentes de cámara/video
+    setShowRecordingSections(true); 
   };
-
+  
+  // Duración de la grabación basada en el tipo de seña
   const getRecordingDuration = (type: string) => {
-  if (type === 'Palabra' || type === 'Caracter') return 3000; // 3 segundos
-  if (type === 'Frases') return 5000; // 5 segundos
-  return 3000; // Valor por defecto
+    if (type === 'Caracter') return 3000; // 3 segundos
+    if (type === 'Palabra') return 3000; // 3 segundos
+    if (type === 'Frases') return 5000; // 5 segundos
+    return 3000; // Valor por defecto
   };
-
-  const filteredSigns = startsWith
-    ? signs.filter(sign => sign.name?.toUpperCase().startsWith(startsWith))
-    : signs;
 
   return (
     <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
-      <div className="flex flex-col gap-4 p-4">
-        {/* Buscar señas */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <h1 className="text-xl font-bold">Buscar señas</h1>
-          <div className="space-y-2">
-            <label htmlFor="typeId" className="block text-sm font-medium text-gray-700">
-              Tipo de seña
-            </label>
-            <select
-              id="typeId"
-              value={typeId}
-              onChange={(e) => setTypeId(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            >
-              <option value="">Selecciona un tipo</option>
-              <option value="Caracter">Caracter</option>
-              <option value="Palabra">Palabra</option>
-              <option value="Frases">Frases</option>
-            </select>
-            <div>
-              <label htmlFor="startsWith" className="block text-sm font-medium text-gray-700">
-                ¿Con qué letra empieza? (A-Z, Ñ)
-              </label>
-              <input
-                id="startsWith"
-                type="text"
-                maxLength={1}
-                value={startsWith}
-                onChange={(e) => {
-                  // Solo permitir letras A-Z y Ñ, mayúsculas
-                  const val = e.target.value.toUpperCase();
-                  if (/^[A-ZÑ]?$/.test(val)) setStartsWith(val);
-                }}
-                className="block w-20 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                placeholder=""
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleSearch}
-                disabled={isPending}
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {isPending ? 'Buscando...' : 'Buscar'}
-              </button>
-              <button
-                onClick={handleClear}
-                className="mt-2 px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
-              >
-                Limpiar
-              </button>
-            </div>
-          </div>
-          {errorMessage && <p className="text-red-600 text-sm mt-2">{errorMessage}</p>}
-        </div>
-
-        {/* Lista de señas */}
-        {filteredSigns.length > 0 && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h2 className="text-lg font-bold">Señas encontradas</h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
-              {filteredSigns.map((sign) => (
-                <div
-                  key={sign.id}
-                  className={`p-2 border rounded-md cursor-pointer text-center transition-colors ${
-                    selectedSign?.id === sign.id ? 'bg-blue-100' : 'bg-white'
-                  }`}
-                  onClick={() => setSelectedSign(sign)}
-                >
-                  {sign.name}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Mensaje si no hay señas para la letra seleccionada */}
-        {signs.length > 0 && filteredSigns.length === 0 && startsWith && (
-          <div className="bg-yellow-100 text-yellow-800 p-4 rounded-lg mt-2 text-center">
-            No hay señas de palabras o frases que comiencen por la letra seleccionada.
-          </div>
-        )}
-
-        {/* Componentes habilitados al seleccionar un seña */}
-        {selectedSign && userId && levelId && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Componente CameraRecorder */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h2 className="text-lg font-bold">Grabar Video</h2>
-              <p>Si tiene dudas de comó hacer la seña elegida revisa el video de ejemplo, tener en cuenta que en cada video solo debe aparecer una sola persona haciendo la seña y se debe grabar de la cintura hacia arriba similar al video de ejemplo.</p>
-              <CameraRecorder
-                name={selectedSign.name} // Nombre del seña seleccionado
-                idSign={selectedSign.id} // ID del seña seleccionado
-                idUser={userId} // ID del usuario autenticado
-                levelId={levelId} // Nivel del usuario autenticado
-                type={selectedSign.type} // Tipo del seña seleccionado
-                duration={getRecordingDuration(selectedSign.type)}
-              />
-            </div>
-
-            {/* Componente ExampleVideo */}
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <h2 className="text-lg font-bold">Video de Ejemplo</h2>
-              <ExampleVideo
-                name={selectedSign.name}
-                meaning={selectedSign.meaning}
-                videoPath={selectedSign.videoPath}
-                reference={selectedSign.reference}
-              />
-            </div>
-          </div>
-        )}
+    <div className="p-4"> {/* Añadido padding a la página principal */}
+      <h1 className="text-2xl font-extrabold text-blue-500 mb-4">Envia tus Señas</h1>
+      
+      {/* Componente LabelsAlphabet */}
+      <div className="mb-8">
+        <h2 className="text-gray-900 mb-4">Selecciona una letra del abecedario para empezar, luego el sistema te entregara las opciones de señas disponibles para grabar y ser parte del conjunto de datos de entrenamiento: </h2>
+        <LabelsAlphabet onLetterSelect={handleLetterSelect} selectedLetter={selectedLetter} />
       </div>
+
+      {/* Indicadores de estado y errores */}
+      {isPending && (
+        <p className="text-blue-600 text-center text-lg mt-4 animate-pulse">Cargando señas...</p>
+      )}
+      {errorMessage && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-4" role="alert">
+          <strong className="font-bold">¡Error!</strong>
+          <span className="block sm:inline"> {errorMessage}</span>
+        </div>
+      )}
+
+      {/* Lista de señas encontrados (solo visible si hay señas y no hay error) */}
+      {!isPending && !errorMessage && signs.length > 0 && (
+        <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Señas que empiezan con &quot;{selectedLetter}&quot;</h2>
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
+            {signs.map((sign) => (
+              <div
+                key={sign.id}
+                className={`
+                  p-3 border rounded-md cursor-pointer text-center 
+                  transition-all duration-200 ease-in-out
+                  ${selectedSign?.id === sign.id 
+                    ? 'bg-blue-600 text-white shadow-md transform scale-105' 
+                    : 'bg-gray-100 hover:bg-blue-100'
+                  }
+                  border-blue-300
+                `}
+                onClick={() => handleSignSelect(sign)}
+              >
+                <span className="font-medium">{sign.name}</span>
+                <span className="block text-xs text-gray-400">({sign.type})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Componentes CameraRecorder y ExampleVideo (visibles solo si se ha seleccionado una seña) */}
+      {showRecordingSections && selectedSign && userId && levelId && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
+          {/* Componente CameraRecorder */}
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Grabar Tu Seña: {selectedSign.name}</h2>
+            <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+              Si tienes dudas de cómo hacer la seña elegida, revisa el video de ejemplo. Recuerda que en cada video solo debe aparecer una persona haciendo la seña y se debe grabar de la cintura hacia arriba, similar al video de ejemplo.
+            </p>
+            <CameraRecorder
+              name={selectedSign.name}
+              idSign={selectedSign.id}
+              idUser={userId}
+              levelId={levelId}
+              type={selectedSign.type}
+              duration={getRecordingDuration(selectedSign.type)}
+            />
+          </div>
+
+          {/* Componente ExampleVideo */}
+          <div className="bg-white shadow-lg rounded-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Video de Ejemplo: {selectedSign.name}</h2>
+            <ExampleVideo
+              name={selectedSign.name}
+              meaning={selectedSign.meaning}
+              videoPath={selectedSign.videoPath}
+              reference={selectedSign.reference}
+            />
+          </div>
+        </div>
+      )}
+    </div>
     </ProtectedRoute>
   );
-};
+}
 
-export default SendSignsPage;
+export default PagesendSign;

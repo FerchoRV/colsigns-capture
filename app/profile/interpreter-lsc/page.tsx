@@ -6,6 +6,7 @@ import SignRecognizer from '@/app/ui/interpreter-lsc/SignRecognizer';
 import VisualizeSignsPage from '@/app/ui/interpreter-lsc/visualize-signs';
 import Script from 'next/script';
 
+
 const GeneralInterpreterLscPage: React.FC = () => {
     const [activeComponent, setActiveComponent] = useState<'signRecognizer' | 'visualizeSigns'>('signRecognizer'); // Estado para alternar componentes
 
