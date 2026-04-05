@@ -129,7 +129,7 @@ const ContributionsPage: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
+    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2),parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
       <div className="p-4">
         <h1 className="text-xl text-blue-500 font-bold mb-4">Mis Contribuciones</h1>
 

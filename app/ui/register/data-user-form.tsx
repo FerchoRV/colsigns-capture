@@ -46,6 +46,7 @@ const RegisterDataUserForm: FC = () => {
     const formData = new FormData(e.currentTarget);
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
+    const auditoryConditionId = formData.get('auditoryConditionId') as string;
     const levelId = formData.get('typeId') as string;
 
     try {
@@ -58,6 +59,7 @@ const RegisterDataUserForm: FC = () => {
       await setDoc(doc(db, 'users', user.uid), {
         firstName,
         lastName,
+        auditoryConditionId: parseInt(auditoryConditionId, 10),
         levelId: parseInt(levelId, 10),
         email: user.email,
         roleId: parseInt(roleId, 10),
@@ -104,6 +106,21 @@ const RegisterDataUserForm: FC = () => {
           />
         </div>
         <div>
+          <label htmlFor="auditoryConditionId" className="block text-sm font-medium text-gray-700 mb-1">
+            Condición auditiva
+          </label>
+          <select
+            id="auditoryConditionId"
+            name="auditoryConditionId"
+            required
+            className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base"
+          >
+            <option value="">Selecciona tu condición auditiva</option>
+            <option value="1">Oyente</option>
+            <option value="2">Sordo</option>
+          </select>
+        </div>
+        <div>
           <label htmlFor="typeId" className="block text-sm font-medium text-gray-700 mb-1">
             Nivel en manejo de señas colombianas
           </label>
@@ -113,7 +130,7 @@ const RegisterDataUserForm: FC = () => {
             required
             className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-base"
           >
-            <option value="">Selecciona un nivel</option> {/* Opción por defecto */}
+            <option value="">Selecciona tu nivel</option> {/* Opción por defecto */}
             <option value="1">Experto</option>
             <option value="2">Intermedio</option>
             <option value="3">Novato</option>

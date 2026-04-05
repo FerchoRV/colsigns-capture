@@ -10,6 +10,7 @@ import { auth, db } from '@/firebase/firebaseConfig';
 interface UserData {
   firstName: string;
   lastName: string;
+  auditoryConditionId?: number;
   levelId: number;
 }
 
@@ -51,6 +52,7 @@ export default function UpdateDataUserForm() {
     const formData = new FormData(e.currentTarget);
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
+    const auditoryConditionId = formData.get('auditoryConditionId') as string;
     const levelId = formData.get('typeId') as string;
 
     try {
@@ -62,6 +64,7 @@ export default function UpdateDataUserForm() {
       await updateDoc(userDocRef, {
         firstName,
         lastName,
+        auditoryConditionId: parseInt(auditoryConditionId, 10),
         levelId: parseInt(levelId, 10), // Convertir a número si es necesario
       });
 
@@ -106,6 +109,26 @@ export default function UpdateDataUserForm() {
           required
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
         />
+      </div>
+      <div className="space-y-1">
+        <label htmlFor="auditoryConditionId" className="text-sm font-medium text-gray-700">
+          Condición auditiva
+        </label>
+        <select
+          id="auditoryConditionId"
+          name="auditoryConditionId"
+          defaultValue={
+            userData.auditoryConditionId != null
+              ? String(userData.auditoryConditionId)
+              : ''
+          }
+          required
+          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+        >
+          <option value="">Selecciona tu condición auditiva</option>
+          <option value="1">Oyente</option>
+          <option value="2">Sordo</option>
+        </select>
       </div>
       <div className="space-y-1">
         <label htmlFor="typeId" className="text-sm font-medium text-gray-700">

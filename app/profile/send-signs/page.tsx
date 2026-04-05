@@ -139,7 +139,7 @@ const PagesendSign: React.FC = () => {
   };
 
   return (
-    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
+    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2),parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
     <div className="p-4"> {/* Añadido padding a la página principal */}
       <h1 className="text-2xl font-extrabold text-blue-500 mb-4">Envia tus Señas</h1>
       
