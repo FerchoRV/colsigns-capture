@@ -10,6 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from '@/firebase/firebaseConfig';
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import NavLinksEvaluator from './nav-links-evaluator';
 
 export default function SideNav() {
   const router = useRouter();
@@ -72,6 +73,7 @@ export default function SideNav() {
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
         <NavLinksUser />
+        {user?.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3) && <NavLinksEvaluator />}
         {user?.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1) && <NavLinksAdmin />}
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
 

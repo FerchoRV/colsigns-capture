@@ -209,7 +209,7 @@ const EvaluateAlphabet: React.FC = () => {
 
 
   return (
-    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)]}>
+    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
     <div className="p-4">
       <h1 className="text-3xl font-extrabold text-blue-500 mb-6">Evalúa señas del alfabeto</h1>
       

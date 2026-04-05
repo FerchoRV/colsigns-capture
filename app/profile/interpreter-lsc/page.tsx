@@ -1,5 +1,5 @@
 'use client'; 
-
+import ProtectedRoute from "../../components/ProtectedRoute";
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import SignRecognizer from '@/app/ui/interpreter-lsc/SignRecognizer';
@@ -11,7 +11,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
     const [activeComponent, setActiveComponent] = useState<'signRecognizer' | 'visualizeSigns'>('signRecognizer'); // Estado para alternar componentes
 
     return (
-        
+        <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
         <main className="flex flex-col items-center gap-4 p-4"> 
             <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" strategy="beforeInteractive" />
             <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" strategy="beforeInteractive" />
@@ -50,6 +50,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
                 {activeComponent === 'visualizeSigns' && <VisualizeSignsPage />}
             </div>
         </main>
+        </ProtectedRoute>
     );
 };
 

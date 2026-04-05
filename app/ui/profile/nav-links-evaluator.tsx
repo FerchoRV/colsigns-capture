@@ -1,9 +1,8 @@
 'use client';
 
 import {
-  DocumentDuplicateIcon,
-  UserIcon,
-  PaperAirplaneIcon
+  WrenchScrewdriverIcon,
+  CubeTransparentIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -13,16 +12,11 @@ import clsx from 'clsx';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
-  { name: 'Informacion', href: '/profile', icon: UserIcon },
-  {
-    name: 'Contribuciones',
-    href: '/profile/contributions',
-    icon: DocumentDuplicateIcon,
-  },
-  { name: 'Enviar señas', href: '/profile/send-signs', icon: PaperAirplaneIcon },
+  { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
+  { name: 'Evaluar', href: '/profile/evaluate', icon: CubeTransparentIcon },
 ];
 
-export default function NavLinksUser() {
+export default function NavLinksEvaluator() {
   const pathname = usePathname();
   return (
     <>

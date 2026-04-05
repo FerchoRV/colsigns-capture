@@ -121,7 +121,7 @@ const UserSearchAndUpdate: React.FC = () => {
                 : userData.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)
                 ? 'Colaborador'
                 : userData.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)
-                ? 'Bloqueado'
+                ? 'Evaluador'
                 : 'Desconocido'}
             </p>
           </div>
@@ -140,7 +140,7 @@ const UserSearchAndUpdate: React.FC = () => {
             >
               <option value={parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1)}>Administrador</option>
               <option value={parseInt(process.env.NEXT_PUBLIC_APP_ROLE_2)}>Colaborador</option>
-              <option value={parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)}>Bloquear</option>
+              <option value={parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)}>Evaluador</option>
             </select>
           </div>
 

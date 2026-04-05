@@ -2,7 +2,7 @@
 "use client"; // Necesario para componentes con estado en Next.js App Router
 
 import React, { useState } from 'react';
-
+import ProtectedRoute from "../../components/ProtectedRoute";
 // Importa los componentes que quieres mostrar
 import EvaluateAlphabet from "@/app/ui/evaluate/evaluate-alphabet"; // Asumo que este es tu LabelsAlphabet renombrado o un nuevo componente
 import EvaluateWordsV2 from "@/app/ui/evaluate/evaluate-wordsv2";
@@ -33,6 +33,7 @@ const EvaluationTabs: React.FC = () => {
   };
 
   return (
+    <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
     <div className="w-full p-4 md:p-8 bg-gray-50 rounded-lg shadow-xl">
       <h1 className="text-3xl font-extrabold text-blue-500 mb-6 text-center">Módulos de Evaluación</h1>
       
@@ -93,6 +94,7 @@ const EvaluationTabs: React.FC = () => {
         {renderContent()}
       </div>
     </div>
+    </ProtectedRoute>
   );
 };
 
