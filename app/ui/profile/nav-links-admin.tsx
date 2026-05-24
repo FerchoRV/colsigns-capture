@@ -4,6 +4,7 @@ import {
   UsersIcon,
   VideoCameraIcon,
   HandRaisedIcon,
+  DocumentArrowDownIcon,
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -16,6 +17,7 @@ const links = [
   { name: 'Administrar usuarios', href: '/profile/admin-users', icon: UsersIcon },
   { name: 'Administrar contribuciones', href: '/profile/admin-contributions', icon: VideoCameraIcon },
   { name: 'Administrar señas', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
+  { name: 'Descargar dataset', href: '/profile/download-dataset', icon: DocumentArrowDownIcon },
 ];
 
 export default function NavLinksAdmin() {
