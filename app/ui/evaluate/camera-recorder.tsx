@@ -130,7 +130,7 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name, idSign, idUser, l
             const storage = getStorage();
             const uniqueCode = uuidv4();
             const fileName = `${name}_${uniqueCode}.mp4`;
-            const storageRef = ref(storage, `${name}/${fileName}`); // Cada seña vive en su propia carpeta a nivel raíz
+            const storageRef = ref(storage, `sign_videos_evaluate/${name}/${fileName}`); // Ruta más organizada en Storage
             const snapshot = await uploadBytes(storageRef, blob);
             const downloadURL = await getDownloadURL(snapshot.ref);
 

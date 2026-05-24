@@ -6,7 +6,7 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 import { collection, query, where, getDocs, doc, getDoc, limit, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { db } from '@/firebase/firebaseConfig';
-import CameraRecorder from '@/app/ui/send-signs/camera-recorder'; // Asegúrate de que la ruta sea correcta
+import CameraRecorder from '@/app/ui/evaluate/camera-recorder'; // Asegúrate de que la ruta sea correcta
 import ExampleVideo from '@/app/ui/send-signs/example-video';
 
 // Define la interfaz para las señas
