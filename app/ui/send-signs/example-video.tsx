@@ -1,36 +1,50 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 interface ExampleVideoProps {
     name: string; // Nombre del seña
-    meaning: string; // Significado del seña
+    meaning?: string; // Significado del seña
     videoPath: string; // URL del video
-    reference: string; // Enlace a más información
+    reference?: string; // Enlace a más información
 }
 
 const ExampleVideo: React.FC<ExampleVideoProps> = ({ name, meaning, videoPath, reference }) => {
     const [showVideo, setShowVideo] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.load();
+        }
+    }, [videoPath]);
 
     return (
         <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-lg shadow-md w-full">
             {/* Información del seña */}
             <h3 className="text-lg font-bold">Nombre seña: {name}</h3>
-            <p className="text-sm text-gray-700">Significado: {meaning}</p>
+            <p className="text-sm text-gray-700">Significado: {meaning || "No disponible"}</p>
 
             {/* Enlace a más información */}
-            <a
-                href={reference}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline text-sm"
-            >
-                Más información
-            </a>
+            {reference && (
+                <a
+                    href={reference}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline text-sm"
+                >
+                    Más información
+                </a>
+            )}
 
             {/* Video aparece arriba del botón */}
             {showVideo && (
-                <video controls className="w-full h-64 bg-black rounded-lg">
+                <video
+                    key={videoPath}
+                    ref={videoRef}
+                    controls
+                    className="w-full h-64 bg-black rounded-lg"
+                >
                     <source src={videoPath} type="video/mp4" />
                     Tu navegador no soporta la reproducción de videos.
                 </video>
