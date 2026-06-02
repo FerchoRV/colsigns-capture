@@ -5,6 +5,8 @@ import {
   VideoCameraIcon,
   HandRaisedIcon,
   DocumentArrowDownIcon,
+  CubeTransparentIcon,
+  WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -18,6 +20,8 @@ const links = [
   { name: 'Administrar contribuciones', href: '/profile/admin-contributions', icon: VideoCameraIcon },
   { name: 'Administrar señas', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
   { name: 'Descargar dataset', href: '/profile/download-dataset', icon: DocumentArrowDownIcon },
+  { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
+  { name: 'Evaluar', href: '/profile/evaluate', icon: CubeTransparentIcon },
 ];
 
 export default function NavLinksAdmin() {
