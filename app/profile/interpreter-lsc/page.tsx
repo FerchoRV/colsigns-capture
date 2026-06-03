@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import SignRecognizer from '@/app/ui/interpreter-lsc/SignRecognizer';
 import VisualizeSignsPage from '@/app/ui/interpreter-lsc/visualize-signs';
-import Script from 'next/script';
 
 
 const GeneralInterpreterLscPage: React.FC = () => {
@@ -13,10 +12,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
     return (
         <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
         <main className="flex flex-col items-center gap-4 p-4"> 
-            <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" strategy="beforeInteractive" />
-            <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" strategy="beforeInteractive" />
-            <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" strategy="beforeInteractive" />
-            <Script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" strategy="beforeInteractive" />
+            
 
             <h1 className="text-2xl font-bold text-blue-500">Prototipo Interprete Colsign (En desarrollo)</h1>
 
