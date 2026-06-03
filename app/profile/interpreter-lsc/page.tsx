@@ -14,7 +14,7 @@ const GeneralInterpreterLscPage: React.FC = () => {
         <main className="flex flex-col items-center gap-4 p-4"> 
             
 
-            <h1 className="text-2xl font-bold text-blue-500">Prototipo Interprete Colsign (En desarrollo)</h1>
+            <h1 className="text-2xl font-bold text-blue-500">Prototipo Interprete Colsign</h1>
 
             {/* Botones para alternar entre los componentes */}
             <div className='flex grid grid-cols-2 grid-grow-1 gap-2 w-full max-w-md'>

@@ -5,7 +5,7 @@ const VisualizeSignsPage: React.FC = () => {
   return (
     <main>
       <h2>
-        Este modulo genera señas a partir de un texto, utilizando videos unificados de señas basicas colombianas, cuenta con alrrededor de 536 señas tomadas de INSOR.
+      Este módulo genera señas a partir de un texto, utilizando videos unificados de señas básicas colombianas, cuenta con alrededor de 536 señas tomadas de INSOR.
       </h2>
       <VisualizeSignsInterpreteComponent />
 

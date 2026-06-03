@@ -190,8 +190,8 @@ export default function SignRecognizer() {
 
     return (
       <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
-        <p className="p-2">El modulo señas a texto esta diseñado para que el usuario pueda grabar un grupo de señas en videos de maximo 10 segundos el sistema procesará el video y entregara el texto correspondiente a las señas grabadas, el resultado se mostrará en la pantalla.</p>
-        <p className="p-2">Solo puedes enviar un video de maximo 15 segundos pero si necsitas menos tiempo al momento de grabar puedes precionar el boton enviar o la tecla enter y se enviara lo grabado hasta el momento o para cancelar la grabacion preciona escape o el boton cancelar, al finalziar el sistema te pedira votar cual resultado es correcto, para hacer seguimiento de los resultados..</p>
+        <p className="p-2">El módulo señas a texto está diseñado para que el usuario pueda grabar un grupo de señas en videos de máximo 10 segundos el sistema procesará el video y entregara el texto correspondiente a las señas grabadas, el resultado se mostrará en la pantalla.</p>
+        <p className="p-2">Solo puedes enviar un video de máximo 15 segundos, pero si necesitas menos tiempo al momento de grabar puedes presionar el botón enviar o la tecla enter y se enviará lo grabado hasta el momento o para cancelar la grabación presiona escape o el botón cancelar, al finalizar el sistema te pedirá votar cual resultado es correcto, para hacer seguimiento de los resultados.</p>
         
         <div className="flex flex-col md:flex-row gap-6 mt-6">
             {/* Columna izquierda: grabación */}
