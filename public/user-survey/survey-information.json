@@ -1,0 +1,98 @@
+{
+    "survey_id": "user_opinion_app",
+    "title": "Encuesta de Opinión del Usuario",
+    "description": "Tu opinión es muy valiosa para nosotros. Por favor, tómate un momento para responder las siguientes preguntas.",
+    "version": 1,
+    "questions": [
+      {
+        "id": 1,
+        "key": "q1_necesidad_sistema",
+        "question_text": "En una escala de 1 a 5 (1: Totalmente en desacuerdo, 5: Totalmente de acuerdo), ¿Considera que un sistema como Colsign es necesario para mitigar las barreras de comunicación en el contexto colombiano?",
+        "type": "scale",
+        "scale": [1, 5, "Totalmente en desacuerdo", "Totalmente de acuerdo"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 2,
+        "key": "q2_intencion_uso",
+        "question_text": "En una escala de 1 a 5 (1: Totalmente en desacuerdo, 5: Totalmente de acuerdo), ¿Consideraría utilizar el sistema Colsign en el futuro para interactuar con personas sordas u oyentes?",
+        "type": "scale",
+        "scale": [1, 5, "Totalmente en desacuerdo", "Totalmente de acuerdo"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 3,
+        "key": "q3_precision_señas_a_texto",
+        "question_text": "En una escala de 1 a 5 (1: Muy mala, 5: Muy buena), ¿Cómo califica la precisión del texto generado a partir de los videos de señas en el módulo 'Señas a texto'?",
+        "type": "scale",
+        "scale": [1, 5, "Muy mala", "Muy buena"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 4,
+        "key": "q4_precision_texto_a_señas",
+        "question_text": "En una escala de 1 a 5 (1: Muy mala, 5: Muy buena), ¿Cómo califica la precisión de las señas generadas a partir del texto enviado en el módulo 'Texto a señas'?",
+        "type": "scale",
+        "scale": [1, 5, "Muy mala", "Muy buena"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 5,
+        "key": "q5_intuitivo_señas_a_texto",
+        "question_text": "En una escala de 1 a 5 (1: Muy difícil, 5: Muy fácil), ¿Qué tan intuitivo le resultó interactuar con el módulo de reconocimiento de 'Señas a texto'?",
+        "type": "scale",
+        "scale": [1, 5, "Muy difícil", "Muy fácil"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 6,
+        "key": "q6_intuitivo_texto_a_señas",
+        "question_text": "En una escala de 1 a 5 (1: Muy difícil, 5: Muy fácil), ¿Qué tan intuitivo le resultó interactuar con el módulo generador de 'Texto a señas'?",
+        "type": "scale",
+        "scale": [1, 5, "Muy difícil", "Muy fácil"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 7,
+        "key": "q7_limite_tiempo_señas",
+        "question_text": "En una escala de 1 a 5 (1: Totalmente insuficiente, 5: Totalmente suficiente), ¿El límite de tiempo de 15 segundos por video de señas le permitió expresar el mensaje deseado de manera clara?",
+        "type": "scale",
+        "scale": [1, 5, "Totalmente insuficiente", "Totalmente suficiente"],
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 8,
+        "key": "q8_aspectos_positivos",
+        "question_text": "¿Qué características o funciones específicas considera que son los mayores aciertos o fortalezas del sistema Colsign?",
+        "type": "open",
+        "scale": null,
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 9,
+        "key": "q9_dificultades_limitaciones",
+        "question_text": "¿Qué dificultades, limitaciones o fallas identificó al interactuar con los diferentes módulos del sistema?",
+        "type": "open",
+        "scale": null,
+        "options": null,
+        "required": true
+      },
+      {
+        "id": 10,
+        "key": "q10_propuestas_evolucion",
+        "question_text": "¿Qué nuevas funciones o mejoras sugeriría agregar en próximas versiones del sistema para optimizar su utilidad en una comunicación real?",
+        "type": "open",
+        "scale": null,
+        "options": null,
+        "required": true
+      }
+    ]
+  }
