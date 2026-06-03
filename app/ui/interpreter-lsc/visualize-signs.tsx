@@ -1,13 +1,13 @@
 import React from "react";
-import VisualizeSignComponent from "../evaluate/visualize-signs";
+import VisualizeSignsInterpreteComponent from "./visualize-signs-interprete";
 
 const VisualizeSignsPage: React.FC = () => {
   return (
     <main>
-      <p>
-        Este módulo permite visualizar las señas que representan un mensaje de texto para poder trasmitir información y facilitar la comunicación con personas sordas, puedes enviar letras individuales(a,b,c..), palabras(Hola, Qué, Caminar), o frases(Cómo estás, Buenos días, por favor) o combinaciones separados por “,” (Hola,Como estas,diego), para los textos que el sistema no tenga soporte idéntico te entregara el deletreo de la palabra.
-      </p>
-      <VisualizeSignComponent />
+      <h2>
+        Este modulo genera señas a partir de un texto, utilizando videos unificados de señas basicas colombianas, cuenta con alrrededor de 536 señas tomadas de INSOR.
+      </h2>
+      <VisualizeSignsInterpreteComponent />
 
     </main>
   );
