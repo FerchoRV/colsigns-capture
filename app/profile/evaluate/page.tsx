@@ -4,31 +4,35 @@
 import React, { useState } from 'react';
 import ProtectedRoute from "../../components/ProtectedRoute";
 // Importa los componentes que quieres mostrar
-import EvaluateAlphabet from "@/app/ui/evaluate/evaluate-alphabet"; // Asumo que este es tu LabelsAlphabet renombrado o un nuevo componente
-import EvaluateWordsV2 from "@/app/ui/evaluate/evaluate-wordsv2";
-import EvaluateGeneratorSign from "@/app/ui/evaluate/evaluate-generator-sign";
-import UserOpinionSurvey from "@/app/ui/evaluate/user-opinion-survey";
+
+import EvaluateColsign45154 from "@/app/ui/evaluate/evaluate-colsign-45-154";
+import EvaluateColsignBiSimetrico from "@/app/ui/evaluate/evaluate-colsgin-simetrico";
+import EvaluateColsignBiAsimetrico from "@/app/ui/evaluate/evaluate-colsign-asimetrico";
+import EvaluateColsignStaticV2 from "@/app/ui/evaluate/evaluate-colsign-static-v2";
+import EvaluateColsignUnimanualV2 from "@/app/ui/evaluate/evaluate-colsign-unimanual-v2";
 
 // Define un tipo para las pestañas para mayor claridad y seguridad de tipo
-type Tab = 'alphabet' | 'words' | 'generator' | 'survey';
+type Tab = | 'colsign-45-154' | 'colsign-bi-simetrico' | 'colsign-bi-asimetrico' | 'colsign-static-v2' | 'colsign-unimanual-v2';
 
 const EvaluationTabs: React.FC = () => {
   // Estado para controlar qué pestaña está activa por defecto
-  const [activeTab, setActiveTab] = useState<Tab>('alphabet'); // La pestaña 'alphabet' será la inicial
+  const [activeTab, setActiveTab] = useState<Tab>('colsign-45-154'); // La pestaña 'alphabet' será la inicial
 
   // Función para renderizar el componente activo
   const renderContent = () => {
-    switch (activeTab) {
-      case 'alphabet':
-        return <EvaluateAlphabet />;
-      case 'words':
-        return <EvaluateWordsV2 />;
-      case 'generator':
-        return <EvaluateGeneratorSign />;
-      case 'survey':
-        return <UserOpinionSurvey />;
+    switch (activeTab) {      
+      case 'colsign-45-154':
+        return <EvaluateColsign45154 />;
+      case 'colsign-bi-simetrico':
+        return <EvaluateColsignBiSimetrico />;
+      case 'colsign-bi-asimetrico':
+        return <EvaluateColsignBiAsimetrico />;
+      case 'colsign-static-v2':
+        return <EvaluateColsignStaticV2 />;
+      case 'colsign-unimanual-v2':
+        return <EvaluateColsignUnimanualV2 />;
       default:
-        return <EvaluateAlphabet />; // Fallback por si acaso
+        return <EvaluateColsign45154 />; // Fallback por si acaso
     }
   };
 
@@ -40,52 +44,64 @@ const EvaluationTabs: React.FC = () => {
       {/* Contenedor de los botones de las pestañas */}
       <div className="flex flex-wrap justify-center gap-4 mb-8 border-b-2 border-blue-200 pb-4">
         <button
-          onClick={() => setActiveTab('alphabet')}
+          onClick={() => setActiveTab('colsign-45-154')}
           className={`
             px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 ease-in-out
-            ${activeTab === 'alphabet' 
+            ${activeTab === 'colsign-45-154' 
               ? 'bg-blue-700 text-white shadow-md transform scale-105' 
               : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
             }
           `}
         >
-          Evaluar Alfabeto
+          Colsign 154 señas
+        </button>        
+        <button
+          onClick={() => setActiveTab('colsign-bi-simetrico')}
+          className={`
+            px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 ease-in-out
+            ${activeTab === 'colsign-bi-simetrico' 
+              ? 'bg-blue-700 text-white shadow-md transform scale-105' 
+              : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
+            }
+          `}
+        >
+          Señas simetricas
         </button>
         <button
-          onClick={() => setActiveTab('words')}
+          onClick={() => setActiveTab('colsign-bi-asimetrico')}
           className={`
             px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 ease-in-out
-            ${activeTab === 'words' 
+            ${activeTab === 'colsign-bi-asimetrico' 
               ? 'bg-blue-700 text-white shadow-md transform scale-105' 
               : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
             }
           `}
         >
-          Evaluar Palabras
+          Señas asimetricas
         </button>
         <button
-          onClick={() => setActiveTab('generator')}
+          onClick={() => setActiveTab('colsign-static-v2')}
           className={`
             px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 ease-in-out
-            ${activeTab === 'generator' 
+            ${activeTab === 'colsign-static-v2' 
               ? 'bg-blue-700 text-white shadow-md transform scale-105' 
               : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
             }
           `}
         >
-          Generador de Señas
+          Señas estaticas
         </button>
         <button
-          onClick={() => setActiveTab('survey')}
+          onClick={() => setActiveTab('colsign-unimanual-v2')}
           className={`
             px-6 py-3 rounded-lg text-lg font-semibold transition-all duration-300 ease-in-out
-            ${activeTab === 'survey' 
+            ${activeTab === 'colsign-unimanual-v2' 
               ? 'bg-blue-700 text-white shadow-md transform scale-105' 
               : 'bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700'
             }
           `}
         >
-          Encuesta de Opinión
+          Señas unimanuales
         </button>
       </div>
 

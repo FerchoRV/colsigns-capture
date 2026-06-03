@@ -21,7 +21,7 @@ const links = [
   { name: 'Administrar señas', href: '/profile/admin-signs-data', icon: HandRaisedIcon },
   { name: 'Descargar dataset', href: '/profile/download-dataset', icon: DocumentArrowDownIcon },
   { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
-  { name: 'Evaluar', href: '/profile/evaluate', icon: CubeTransparentIcon },
+  { name: 'Evaluar modelos', href: '/profile/evaluate', icon: CubeTransparentIcon },
 ];
 
 export default function NavLinksAdmin() {

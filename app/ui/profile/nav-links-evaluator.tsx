@@ -13,7 +13,7 @@ import clsx from 'clsx';
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
-  { name: 'Evaluar', href: '/profile/evaluate', icon: CubeTransparentIcon },
+  { name: 'Evaluar modelos', href: '/profile/evaluate', icon: CubeTransparentIcon },
 ];
 
 export default function NavLinksEvaluator() {
