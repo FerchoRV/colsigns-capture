@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { collection, getDocs, query, where, addDoc } from 'firebase/firestore';
+import { collection, getDocs, query, where, addDoc, doc, updateDoc } from 'firebase/firestore';
 import { db, auth } from '@/firebase/firebaseConfig'; // Asegúrate de que esta ruta sea correcta
 
 // Endpoint de la API de modelos (texto a señas)
@@ -31,6 +31,12 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+
+  // Estado para la conformidad del usuario con las señas generadas
+  const [currentQueryDocId, setCurrentQueryDocId] = useState<string | null>(null);
+  const [userResponse, setUserResponse] = useState<'yes' | 'no' | null>(null);
+  const [isSavingResponse, setIsSavingResponse] = useState(false);
+  const [responseError, setResponseError] = useState<string | null>(null);
 
   // Obtener el usuario autenticado para registrar la consulta
   useEffect(() => {
@@ -143,22 +149,22 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
     return allVideoResults;
   };
 
-  // Guarda la consulta en la colección text-to-signs-collection
+  // Guarda la consulta en la colección text-to-signs-collection y devuelve el id del documento
   const saveTextToSignQuery = async (
     textOriginal: string,
     selectedSigns: string[],
     hadProfanity: boolean
-  ) => {
+  ): Promise<string | null> => {
     try {
       const currentUserId = auth.currentUser?.uid ?? userId;
 
       if (!currentUserId) {
         console.warn('No hay usuario autenticado para registrar la consulta texto-a-señas.');
-        return;
+        return null;
       }
 
       const textToSignCollection = collection(db, 'text-to-signs-collection');
-      await addDoc(textToSignCollection, {
+      const docRef = await addDoc(textToSignCollection, {
         userId: currentUserId,
         text_original: textOriginal,
         senas_seleccionadas: selectedSigns,
@@ -167,8 +173,50 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
         createdAt: new Date(),
       });
       console.log('✅ Consulta texto-a-señas registrada en Firestore.');
+      return docRef.id;
     } catch (firestoreError) {
       console.error('🚨 Error al guardar la consulta en Firestore:', firestoreError);
+      return null;
+    }
+  };
+
+  // Reinicia todo para esperar un nuevo mensaje
+  const resetForNewMessage = () => {
+    setInputWord('');
+    setVideos([]);
+    setCurrentVideoIndex(0);
+    setError('');
+    setCurrentQueryDocId(null);
+    setUserResponse(null);
+    setResponseError(null);
+  };
+
+  // Guarda la conformidad del usuario (yes/no) en el documento de la consulta
+  const handleUserResponse = async (response: 'yes' | 'no') => {
+    if (!currentQueryDocId) return;
+
+    setIsSavingResponse(true);
+    setResponseError(null);
+
+    try {
+      await updateDoc(doc(db, 'text-to-signs-collection', currentQueryDocId), {
+        user_response: response,
+        respondedAt: new Date(),
+      });
+      setUserResponse(response);
+      // Tras confirmar, limpiar todo y quedar listos para un nuevo mensaje
+      setTimeout(() => {
+        resetForNewMessage();
+      }, 1800);
+    } catch (firestoreError) {
+      console.error('🚨 Error al guardar la respuesta del usuario:', firestoreError);
+      setResponseError(
+        `Error al guardar tu respuesta: ${
+          firestoreError instanceof Error ? firestoreError.message : 'Desconocido'
+        }`
+      );
+    } finally {
+      setIsSavingResponse(false);
     }
   };
 
@@ -176,6 +224,10 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
     setError('');
     setVideos([]);
     setCurrentVideoIndex(0); // Reinicia el índice al iniciar una nueva búsqueda
+    // Reiniciar la conformidad del usuario para la nueva consulta
+    setCurrentQueryDocId(null);
+    setUserResponse(null);
+    setResponseError(null);
 
     const cleanedInput = inputWord.replace(/\s+/g, ' ').trim();
     if (cleanedInput.length === 0) {
@@ -232,8 +284,9 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
       const allVideoResults = await buildVideoResults(filteredSigns);
       setVideos(allVideoResults);
 
-      // 4. Registrar la consulta en Firestore
-      await saveTextToSignQuery(data?.text_original ?? cleanedInput, filteredSigns, hadProfanity);
+      // 4. Registrar la consulta en Firestore y guardar el id para la conformidad
+      const docId = await saveTextToSignQuery(data?.text_original ?? cleanedInput, filteredSigns, hadProfanity);
+      setCurrentQueryDocId(docId);
     } catch (err: unknown) {
       console.error('Error al generar señas:', err);
       setError(
@@ -369,6 +422,55 @@ const VisualizeSignsInterpreteComponent: React.FC = () => {
                     </p>
                 )}
             </div>
+          </div>
+        )}
+
+        {/* Pregunta de conformidad del usuario */}
+        {videos.length > 0 && !isLoading && currentQueryDocId && (
+          <div className="w-full max-w-xl bg-gray-50 border rounded-lg p-6 mt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+              ¿Estás de acuerdo con las señas generadas?
+            </h3>
+            <div className="flex justify-center gap-4">
+              {(!userResponse || userResponse === 'yes') && (
+                <button
+                  onClick={() => handleUserResponse('yes')}
+                  disabled={isSavingResponse}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 ${
+                    userResponse === 'yes'
+                      ? 'bg-green-700 text-white'
+                      : 'bg-green-500 text-white hover:bg-green-600'
+                  } ${isSavingResponse ? 'opacity-60 cursor-not-allowed' : ''}`}
+                >
+                  Sí
+                </button>
+              )}
+              {(!userResponse || userResponse === 'no') && (
+                <button
+                  onClick={() => handleUserResponse('no')}
+                  disabled={isSavingResponse}
+                  className={`px-6 py-2 rounded-lg font-semibold transition-colors duration-200 ${
+                    userResponse === 'no'
+                      ? 'bg-red-700 text-white'
+                      : 'bg-red-500 text-white hover:bg-red-600'
+                  } ${isSavingResponse ? 'opacity-60 cursor-not-allowed' : ''}`}
+                >
+                  No
+                </button>
+              )}
+            </div>
+
+            {isSavingResponse && (
+              <p className="text-blue-600 text-center mt-4 animate-pulse">Guardando tu respuesta...</p>
+            )}
+            {responseError && (
+              <p className="text-red-600 text-center mt-4">{responseError}</p>
+            )}
+            {userResponse && !isSavingResponse && (
+              <p className="text-green-600 text-center mt-4 font-medium">
+                ¡Gracias por tu respuesta! Preparando para un nuevo mensaje...
+              </p>
+            )}
           </div>
         )}
 

@@ -2,7 +2,8 @@
 
 import {
   WrenchScrewdriverIcon,
-  CubeTransparentIcon
+  CubeTransparentIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -14,6 +15,7 @@ import clsx from 'clsx';
 const links = [
   { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
   { name: 'Evaluar modelos', href: '/profile/evaluate', icon: CubeTransparentIcon },
+  { name: 'Encuesta', href: '/profile/user-survey', icon: ChartBarIcon },
 ];
 
 export default function NavLinksEvaluator() {

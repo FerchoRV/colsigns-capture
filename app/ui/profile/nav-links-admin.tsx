@@ -6,7 +6,8 @@ import {
   HandRaisedIcon,
   DocumentArrowDownIcon,
   CubeTransparentIcon,
-  WrenchScrewdriverIcon
+  WrenchScrewdriverIcon,
+  ChartBarIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -22,6 +23,7 @@ const links = [
   { name: 'Descargar dataset', href: '/profile/download-dataset', icon: DocumentArrowDownIcon },
   { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
   { name: 'Evaluar modelos', href: '/profile/evaluate', icon: CubeTransparentIcon },
+  { name: 'Encuesta', href: '/profile/user-survey', icon: ChartBarIcon },
 ];
 
 export default function NavLinksAdmin() {
