@@ -53,7 +53,7 @@ const RegisterDataUserForm: FC = () => {
       const user = auth.currentUser;
       if (!user) throw new Error('Usuario no autenticado');
 
-      const roleId = process.env.NEXT_PUBLIC_APP_ROLE_2;
+      const roleId = process.env.NEXT_PUBLIC_APP_ROLE_3;
 
       // Guardar información adicional en Firestore, incluyendo status_tyc
       await setDoc(doc(db, 'users', user.uid), {

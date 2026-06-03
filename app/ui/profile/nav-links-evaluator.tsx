@@ -3,7 +3,8 @@
 import {
   WrenchScrewdriverIcon,
   CubeTransparentIcon,
-  ChartBarIcon
+  ChartBarIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 
 import Link from 'next/link';
@@ -13,6 +14,7 @@ import clsx from 'clsx';
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
+  { name: 'Informacion', href: '/profile', icon: UserIcon },
   { name: 'Interprete', href: '/profile/interpreter-lsc', icon: WrenchScrewdriverIcon },
   { name: 'Evaluar modelos', href: '/profile/evaluate', icon: CubeTransparentIcon },
   { name: 'Encuesta', href: '/profile/user-survey', icon: ChartBarIcon },

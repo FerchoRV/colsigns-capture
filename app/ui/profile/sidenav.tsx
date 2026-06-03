@@ -12,11 +12,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavLinksEvaluator from './nav-links-evaluator';
 
+const ROLE_ADMIN = parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1 ?? '', 10);
+const ROLE_EVALUATOR = parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3 ?? '', 10);
+
 export default function SideNav() {
   const router = useRouter();
   const [user, setUser] = useState<{ id: string; roleId?} | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -41,9 +48,12 @@ export default function SideNav() {
         } catch (error) {
           console.error('❌ Error obteniendo datos del usuario:', error);
           setUser(null);
+        } finally {
+          setIsLoadingUser(false);
         }
       } else {
         console.log('🔴 Usuario no autenticado. Redirigiendo a /login...');
+        setIsLoadingUser(false);
         router.replace('/login'); // Redirige si no está autenticado
       }
     });
@@ -72,12 +82,19 @@ export default function SideNav() {
         </div>
       </Link>
       <div className="flex grow flex-row justify-between space-x-2 md:flex-col md:space-x-0 md:space-y-2">
-        <NavLinksUser />
-        {user?.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3) && <NavLinksEvaluator />}
-        {user?.roleId === parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1) && <NavLinksAdmin />}
+        {isMounted && !isLoadingUser && user && (
+          user.roleId === ROLE_EVALUATOR ? (
+            <NavLinksEvaluator />
+          ) : (
+            <>
+              <NavLinksUser />
+              {user.roleId === ROLE_ADMIN && <NavLinksAdmin />}
+            </>
+          )
+        )}
         <div className="hidden h-auto w-full grow rounded-md bg-gray-50 md:block"></div>
 
-        {user && (
+        {isMounted && user && (
           <button
             onClick={logout}
             className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
