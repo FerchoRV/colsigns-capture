@@ -240,8 +240,9 @@ const EvaluateColsign45154: React.FC = () => {
 
         <div className="mb-8">
           <h2 className="text-xl text-gray-800 mb-4">
-            Selecciona una seña, luego el sistema te entregará las opciones para grabar y evaluar
-            tu seña como parte del conjunto de datos de prueba y evaluación:
+            El modelo de señas Colsign 154 fue entrenado con 154 señas basicas de la lengua de señas colombiana, este espacio es para enviar videos de señas para evluar el modelo.
+            debes eleccionar una seña, luego el sistema te entregará las opciones para grabar y evaluar
+            tu seña sera enviada al conjunto de datos de prueba y evaluación:
           </h2>
           <LabelsColsign45154
             onLetterSelect={handleLabelAndTypeSelect}

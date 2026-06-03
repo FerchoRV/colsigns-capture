@@ -240,8 +240,8 @@ const EvaluateColsignStatic: React.FC = () => {
 
         <div className="mb-8">
           <h2 className="text-xl text-gray-800 mb-4">
-            Selecciona una seña, luego el sistema te entregará las opciones para grabar y evaluar
-            tu seña como parte del conjunto de datos de prueba y evaluación:
+            El modelo de señas estaticas fue entrenado solo con señas basicas del alfabeto colombiano que no llevan movimiento, debes eleccionar una seña, luego el sistema te entregará las opciones para grabar y evaluar
+            tu seña sera enviada al conjunto de datos de prueba y evaluación:
           </h2>
           <LabelsColsignStaticV2
             onLetterSelect={handleLabelAndTypeSelect}

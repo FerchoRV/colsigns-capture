@@ -241,8 +241,9 @@ const EvaluateColsignUnimanualV2: React.FC = () => {
 
         <div className="mb-8">
           <h2 className="text-xl text-gray-800 mb-4">
-            Selecciona una seña, luego el sistema te entregará las opciones para grabar y evaluar
-            tu seña como parte del conjunto de datos de prueba y evaluación:
+            El modelo de señas dinamicas unimanuales fue entrenado unicamente con señas basicas que se realizan con una sola mano y movimientos, debes 
+            seleccionar una seña, luego el sistema te entregará las opciones para grabar y evaluar
+            tu seña sera enviada al conjunto de datos de prueba y evaluación:
           </h2>
           <LabelsColsignUnimanualV2
             onLetterSelect={handleLabelAndTypeSelect}

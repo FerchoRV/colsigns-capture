@@ -240,8 +240,9 @@ const EvaluateColsignBiSimetrico: React.FC = () => {
 
         <div className="mb-8">
           <h2 className="text-xl text-gray-800 mb-4">
-            Selecciona una seña, luego el sistema te entregará las opciones para grabar y evaluar
-            tu seña como parte del conjunto de datos de prueba y evaluación:
+            El modelo de señas dinamicas simetricas fue entrenado con señas basicas que se realizan con ambas manos y movimientos simetricos o tipo espejo, debes 
+            seleccionar una seña, luego el sistema te entregará las opciones para grabar y evaluar
+            tu seña sera enviada al conjunto de datos de prueba y evaluación:
           </h2>
           <LabelsColsignBiSimetrico
             onLetterSelect={handleLabelAndTypeSelect}
