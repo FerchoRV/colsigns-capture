@@ -25,12 +25,14 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name='sign-video-to-tex
     const videoRef = useRef<HTMLVideoElement>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const autoStopTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const visibilityTipTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isCancelledRef = useRef(false); // Marca si la grabación se canceló (no se debe enviar)
     const [recording, setRecording] = useState(false);
     const [stream, setStream] = useState<MediaStream | null>(null);
     const [isCameraOn, setIsCameraOn] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [countdown, setCountdown] = useState<number | null>(null);
+    const [showVisibilityTip, setShowVisibilityTip] = useState(false);
 
     const startCamera = useCallback(async () => {
         try {
@@ -204,6 +206,9 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name='sign-video-to-tex
             if (autoStopTimeoutRef.current) {
                 clearTimeout(autoStopTimeoutRef.current);
             }
+            if (visibilityTipTimeoutRef.current) {
+                clearTimeout(visibilityTipTimeoutRef.current);
+            }
             stopCamera();
         };
     }, [stopCamera]); // Dependencia stopCamera
@@ -223,6 +228,14 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name='sign-video-to-tex
                         onClick={() => {
                             setIsCameraOn(true);
                             startCamera();
+                            // Mostrar el mensaje de visibilidad durante 3 segundos
+                            setShowVisibilityTip(true);
+                            if (visibilityTipTimeoutRef.current) {
+                                clearTimeout(visibilityTipTimeoutRef.current);
+                            }
+                            visibilityTipTimeoutRef.current = setTimeout(() => {
+                                setShowVisibilityTip(false);
+                            }, 3000);
                         }}
                         className="px-4 py-2 text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors duration-200"
                     >
@@ -240,6 +253,11 @@ const CameraRecorder: React.FC<CameraRecorderProps> = ({ name='sign-video-to-tex
                                     <span className="text-7xl font-bold text-white drop-shadow-lg pointer-events-none select-none bg-black bg-opacity-40 rounded-full px-10 py-2">
                                         {countdown}
                                     </span>
+                                </div>
+                            )}
+                            {showVisibilityTip && (
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[90%] bg-black bg-opacity-70 text-white text-sm text-center px-4 py-2 rounded-lg">
+                                    Procura que tu cabeza, hombros y manos estén siempre visibles por la cámara.
                                 </div>
                             )}
                             {recording && (

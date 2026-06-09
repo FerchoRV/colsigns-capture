@@ -2,38 +2,44 @@
 
 import React, { useEffect, useState } from 'react';
 import CameraRecorder from '@/app/ui/interpreter-lsc/camera-recorder';
+import ExampleVideo from '@/app/ui/send-signs/example-video';
 import { auth, db } from '@/firebase/firebaseConfig';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, collection, query, where, getDocs, limit } from 'firebase/firestore';
 import ProtectedRoute from '@/app/components/ProtectedRoute';
 
 const COLSIGN_API_BASE = "https://colsign-api-models-244204625992.europe-west1.run.app/api/v1";
-const COLSIGN_ENDPOINT_SIGN_TO_TEXT_FLAT = `${COLSIGN_API_BASE}/sign-to-narrative/flat`;
-const COLSIGN_ENDPOINT_SIGN_TO_TEXT_HIERARCHICAL = `${COLSIGN_API_BASE}/sign-to-narrative/hierarchical`;
+const COLSIGN_ENDPOINT_SIGN_TO_TEXT_FLAT = `${COLSIGN_API_BASE}/sign-to-narrative/flat/sliding-window`;
+const COLSIGN_ENDPOINT_SIGN_TO_TEXT_HIERARCHICAL = `${COLSIGN_API_BASE}/sign-to-narrative/hierarchical/sliding-window`;
+
+// Archivo con las 154 señas disponibles (compartidas por ambas estrategias)
+const LABELS_URL = "/info_models/colsign_lstm_norm_45_154_labels.json";
+
+// Parámetros de procesamiento enviados a la API (aplican a ambos endpoints)
+const API_PARAMS = {
+    window_seconds: 2,
+    stride_seconds: 1,
+    min_confidence: 0.5,
+    repeat_gap_seconds: 3,
+    discard_tail_seconds: 2,
+    min_segment_frames: 10,
+};
+
+// Cada predicción individual de la API (en orden de detección)
+interface Prediction {
+    label: string;
+    prob?: number;
+    [key: string]: unknown;
+}
 
 // Respuesta de los endpoints de narrativa
 interface NarrativeResponse {
     count: number;
-    predictions: unknown[];
+    predictions: Prediction[];
     narrative: string;
 }
 
 // Valores posibles para el campo result_select
 type ResultSelection = 'flat' | 'hierarchical' | 'both' | 'none';
-
-type ModelKey = 'flat' | 'hierarchical';
-
-type ModelProgressStatus = 'idle' | 'processing' | 'retrying' | 'completed' | 'failed';
-
-interface ModelProgress {
-    status: ModelProgressStatus;
-    clipSeconds: number | null;
-    attempt: number;
-}
-
-const INITIAL_MODEL_PROGRESS: Record<ModelKey, ModelProgress> = {
-    flat: { status: 'idle', clipSeconds: null, attempt: 0 },
-    hierarchical: { status: 'idle', clipSeconds: null, attempt: 0 },
-};
 
 export default function SignRecognizer() {
     const [userId, setUserId] = useState<string | null>(null); // ID del usuario autenticado
@@ -42,7 +48,6 @@ export default function SignRecognizer() {
     // Estado del procesamiento y resultados
     const [currentDocId, setCurrentDocId] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [modelProgress, setModelProgress] = useState<Record<ModelKey, ModelProgress>>(INITIAL_MODEL_PROGRESS);
     const [processingError, setProcessingError] = useState<string | null>(null);
     const [flatResponse, setFlatResponse] = useState<NarrativeResponse | null>(null);
     const [hierarchicalResponse, setHierarchicalResponse] = useState<NarrativeResponse | null>(null);
@@ -51,6 +56,116 @@ export default function SignRecognizer() {
     const [resultSelect, setResultSelect] = useState<ResultSelection | null>(null);
     const [isSavingSelection, setIsSavingSelection] = useState(false);
     const [selectionError, setSelectionError] = useState<string | null>(null);
+
+    // Estado del modal con las señas disponibles
+    const [showLabelsModal, setShowLabelsModal] = useState(false);
+    const [availableLabels, setAvailableLabels] = useState<string[]>([]);
+    const [isLoadingLabels, setIsLoadingLabels] = useState(false);
+    const [labelsError, setLabelsError] = useState<string | null>(null);
+
+    // Estado de la seña seleccionada dentro del modal (para ver su video de ejemplo)
+    const [selectedSign, setSelectedSign] = useState<{
+        name: string;
+        videoPath: string;
+        meaning?: string;
+        reference?: string;
+    } | null>(null);
+    const [isLoadingSign, setIsLoadingSign] = useState(false);
+    const [signError, setSignError] = useState<string | null>(null);
+
+    // Busca el video de ejemplo de una seña por su nombre
+    const handleSelectLabel = async (label: string) => {
+        setIsLoadingSign(true);
+        setSignError(null);
+        setSelectedSign(null);
+
+        try {
+            const q = query(
+                collection(db, 'video_example'),
+                where('name', '==', label),
+                where('status', '==', 'activo'),
+                limit(1)
+            );
+            const snapshot = await getDocs(q);
+
+            if (!snapshot.empty) {
+                const data = snapshot.docs[0].data() as {
+                    name: string;
+                    videoPath: string;
+                    meaning?: string;
+                    reference?: string;
+                };
+                setSelectedSign({
+                    name: data.name ?? label,
+                    videoPath: data.videoPath,
+                    meaning: data.meaning,
+                    reference: data.reference,
+                });
+            } else {
+                setSelectedSign({ name: label, videoPath: '' });
+                setSignError(`No se encontró un video de ejemplo para "${label}".`);
+            }
+        } catch (error) {
+            console.error('Error al buscar el video de ejemplo:', error);
+            setSignError('Error al cargar el video de ejemplo.');
+        } finally {
+            setIsLoadingSign(false);
+        }
+    };
+
+    // Vuelve a la lista de señas dentro del modal
+    const handleBackToLabels = () => {
+        setSelectedSign(null);
+        setSignError(null);
+    };
+
+    // Cierra el modal y reinicia la selección interna
+    const handleCloseLabelsModal = () => {
+        setShowLabelsModal(false);
+        setSelectedSign(null);
+        setSignError(null);
+    };
+
+    // Cargar las señas disponibles desde el JSON (una sola vez)
+    useEffect(() => {
+        let isMounted = true;
+
+        const fetchLabels = async () => {
+            try {
+                setIsLoadingLabels(true);
+                setLabelsError(null);
+
+                const response = await fetch(LABELS_URL, { cache: 'force-cache' });
+                if (!response.ok) {
+                    throw new Error(`No se pudo cargar la lista de señas (${response.status}).`);
+                }
+
+                const data = await response.json();
+                const idToName: Record<string, string> = data?.id_to_name ?? {};
+
+                // Ordena por id numérico para mostrarlas de forma estable
+                const labels = Object.entries(idToName)
+                    .sort(([a], [b]) => Number(a) - Number(b))
+                    .map(([, name]) => name);
+
+                if (isMounted) setAvailableLabels(labels);
+            } catch (error) {
+                if (isMounted) {
+                    setLabelsError(
+                        error instanceof Error ? error.message : 'Error al cargar las señas disponibles.'
+                    );
+                }
+            } finally {
+                if (isMounted) setIsLoadingLabels(false);
+            }
+        };
+
+        fetchLabels();
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     // Obtener el usuario autenticado y su nivel
     useEffect(() => {
@@ -73,12 +188,12 @@ export default function SignRecognizer() {
         return () => unsubscribe();
     }, []);
 
-    // Envía el video a un endpoint de narrativa y devuelve la respuesta completa
-    const fetchNarrative = async (endpoint: string, videoUrl: string, clip_seconds: number, min_confidence: number): Promise<NarrativeResponse> => {
+    // Envía el video a un endpoint de narrativa con los parámetros de procesamiento
+    const fetchNarrative = async (endpoint: string, videoUrl: string): Promise<NarrativeResponse> => {
         const response = await fetch(endpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ video_url: videoUrl, clip_seconds: clip_seconds, min_confidence: min_confidence }),
+            body: JSON.stringify({ video_url: videoUrl, ...API_PARAMS }),
         });
 
         if (!response.ok) {
@@ -95,62 +210,6 @@ export default function SignRecognizer() {
         return (await response.json()) as NarrativeResponse;
     };
 
-    // Indica si una respuesta tiene un narrative válido
-    const hasValidNarrative = (response: NarrativeResponse | null): boolean =>
-        Boolean(response?.narrative && response.narrative.trim().length > 0);
-
-    const updateModelProgress = (model: ModelKey, update: Partial<ModelProgress>) => {
-        setModelProgress((prev) => ({
-            ...prev,
-            [model]: { ...prev[model], ...update },
-        }));
-    };
-
-    // Procesa un modelo reintentando con distintos clip_seconds hasta obtener narrative
-    const processModelWithRetries = async (
-        endpoint: string,
-        videoUrl: string,
-        modelKey: ModelKey
-    ): Promise<{ response: NarrativeResponse | null; clipSeconds: number; minConfidence: number }> => {
-        const clipSecondsSequence = [2, 1.5, 1]; // Se reduce el corte si narrative llega null
-        const minConfidence = 0.6;
-
-        let lastResponse: NarrativeResponse | null = null;
-        let lastClipSeconds = clipSecondsSequence[0];
-
-        for (let i = 0; i < clipSecondsSequence.length; i++) {
-            const clip = clipSecondsSequence[i];
-            lastClipSeconds = clip;
-
-            updateModelProgress(modelKey, {
-                status: i === 0 ? 'processing' : 'retrying',
-                clipSeconds: clip,
-                attempt: i + 1,
-            });
-
-            try {
-                const res = await fetchNarrative(endpoint, videoUrl, clip, minConfidence);
-                lastResponse = res;
-                // Si ya hay narrative válido, no se sigue reintentando
-                if (hasValidNarrative(res)) {
-                    updateModelProgress(modelKey, { status: 'completed', clipSeconds: clip, attempt: i + 1 });
-                    return { response: res, clipSeconds: clip, minConfidence };
-                }
-            } catch (e) {
-                console.error(`Error procesando ${endpoint} con clip_seconds=${clip}:`, e);
-                // Continuar con el siguiente clip_seconds
-            }
-        }
-
-        // Tras agotar los reintentos, se devuelve el último resultado (aunque narrative sea null)
-        updateModelProgress(modelKey, {
-            status: hasValidNarrative(lastResponse) ? 'completed' : 'failed',
-            clipSeconds: lastClipSeconds,
-            attempt: clipSecondsSequence.length,
-        });
-        return { response: lastResponse, clipSeconds: lastClipSeconds, minConfidence };
-    };
-
     // Cuando el video se sube, procesarlo en ambos modelos y guardar las respuestas
     const handleVideoUploaded = async (docId: string, videoUrl: string) => {
         // Reiniciar el estado para un nuevo procesamiento
@@ -161,16 +220,15 @@ export default function SignRecognizer() {
         setHierarchicalResponse(null);
         setResultSelect(null);
         setSelectionError(null);
-        setModelProgress(INITIAL_MODEL_PROGRESS);
 
-        // Procesar ambos modelos en paralelo, cada uno con su propia secuencia de reintentos
-        const [flatResult, hierarchicalResult] = await Promise.all([
-            processModelWithRetries(COLSIGN_ENDPOINT_SIGN_TO_TEXT_FLAT, videoUrl, 'flat'),
-            processModelWithRetries(COLSIGN_ENDPOINT_SIGN_TO_TEXT_HIERARCHICAL, videoUrl, 'hierarchical'),
+        // Procesar ambos modelos en paralelo, tolerante a fallos (una sola llamada por modelo)
+        const [flatResult, hierarchicalResult] = await Promise.allSettled([
+            fetchNarrative(COLSIGN_ENDPOINT_SIGN_TO_TEXT_FLAT, videoUrl),
+            fetchNarrative(COLSIGN_ENDPOINT_SIGN_TO_TEXT_HIERARCHICAL, videoUrl),
         ]);
 
-        const flatData = flatResult.response;
-        const hierarchicalData = hierarchicalResult.response;
+        const flatData = flatResult.status === 'fulfilled' ? flatResult.value : null;
+        const hierarchicalData = hierarchicalResult.status === 'fulfilled' ? hierarchicalResult.value : null;
 
         setFlatResponse(flatData);
         setHierarchicalResponse(hierarchicalData);
@@ -183,19 +241,17 @@ export default function SignRecognizer() {
             setProcessingError('El modelo jerárquico no respondió correctamente. Se muestra solo el modelo plano.');
         }
 
-        // Guardar las respuestas completas y los parámetros usados por cada modelo
+        // Guardar las respuestas completas y los parámetros de procesamiento (campos independientes)
         try {
             await updateDoc(doc(db, 'signs-to-text-collection', docId), {
                 flat_narrative_response: flatData ?? null,
                 hierarchical_narrative_response: hierarchicalData ?? null,
-                clip_seconds: {
-                    flat: flatResult.clipSeconds,
-                    hierarchical: hierarchicalResult.clipSeconds,
-                },
-                min_confidence: {
-                    flat: flatResult.minConfidence,
-                    hierarchical: hierarchicalResult.minConfidence,
-                },
+                window_seconds: API_PARAMS.window_seconds,
+                stride_seconds: API_PARAMS.stride_seconds,
+                min_confidence: API_PARAMS.min_confidence,
+                repeat_gap_seconds: API_PARAMS.repeat_gap_seconds,
+                discard_tail_seconds: API_PARAMS.discard_tail_seconds,
+                min_segment_frames: API_PARAMS.min_segment_frames,
                 processedAt: new Date(),
             });
         } catch (error) {
@@ -207,7 +263,6 @@ export default function SignRecognizer() {
             );
         } finally {
             setIsProcessing(false);
-            setModelProgress(INITIAL_MODEL_PROGRESS);
         }
     };
 
@@ -242,35 +297,15 @@ export default function SignRecognizer() {
         setResultSelect(null);
         setProcessingError(null);
         setSelectionError(null);
-        setModelProgress(INITIAL_MODEL_PROGRESS);
     };
 
     const hasResults = Boolean(flatResponse || hierarchicalResponse);
 
-    const getModelProgressLabel = (model: ModelKey): string => {
-        const progress = modelProgress[model];
-        if (progress.status === 'idle') {
-            return 'En espera...';
-        }
-        if (progress.status === 'processing') {
-            return `Analizando con corte de ${progress.clipSeconds}s (intento ${progress.attempt}/3)...`;
-        }
-        if (progress.status === 'retrying') {
-            return `Reintentando con corte de ${progress.clipSeconds}s (intento ${progress.attempt}/3)...`;
-        }
-        if (progress.status === 'completed') {
-            return 'Análisis completado.';
-        }
-        return 'Sin texto detectado tras todos los intentos.';
-    };
-
     // Renderiza el contenido de una tarjeta según el estado del procesamiento
-    const renderNarrativeContent = (response: NarrativeResponse | null, model: ModelKey) => {
+    const renderNarrativeContent = (response: NarrativeResponse | null) => {
         if (isProcessing) {
             return (
-                <p className="text-blue-600 text-sm animate-pulse">
-                    {getModelProgressLabel(model)}
-                </p>
+                <p className="text-blue-600 text-sm animate-pulse">Procesando...</p>
             );
         }
         if (!currentDocId) {
@@ -279,8 +314,26 @@ export default function SignRecognizer() {
         if (!response) {
             return <p className="text-gray-400 italic">Sin respuesta de este modelo.</p>;
         }
+
+        // Lista de labels en el orden de detección
+        const detectedLabels = Array.isArray(response.predictions)
+            ? response.predictions
+                  .map((p) => p?.label)
+                  .filter((label): label is string => Boolean(label && label.trim().length > 0))
+            : [];
+
         if (response.narrative && response.narrative.trim().length > 0) {
-            return <p className="text-gray-800 text-lg">{response.narrative}</p>;
+            return (
+                <div className="space-y-2">
+                    <p className="text-gray-800 text-lg">{response.narrative}</p>
+                    {detectedLabels.length > 0 && (
+                        <p className="text-sm text-gray-500">
+                            <span className="font-semibold">Señas detectadas:</span>{' '}
+                            {detectedLabels.join(', ')}
+                        </p>
+                    )}
+                </div>
+            );
         }
         return <p className="text-orange-600 font-medium">Señas no detectadas</p>;
     };
@@ -294,7 +347,14 @@ export default function SignRecognizer() {
 
     return (
       <ProtectedRoute allowedRoles={[parseInt(process.env.NEXT_PUBLIC_APP_ROLE_1), parseInt(process.env.NEXT_PUBLIC_APP_ROLE_3)]}>
-        <p className="p-2">El módulo señas a texto está diseñado para que el usuario pueda grabar un grupo de señas en videos de máximo 10 segundos el sistema procesará el video y entregara el texto correspondiente a las señas grabadas, el resultado se mostrará en la pantalla.</p>
+        <p className="p-2">El módulo señas a texto está diseñado para que el usuario pueda grabar un grupo de señas en videos de máximo 20 segundos el sistema procesará el video y entregara el texto correspondiente a las señas grabadas, el resultado se mostrará en la pantalla, para conocer las señas disponibles{' '}
+          <button
+            type="button"
+            onClick={() => setShowLabelsModal(true)}
+            className="text-blue-600 underline font-medium hover:text-blue-800"
+          >
+            da clic aquí
+          </button>.</p>
         <p className="p-2">Solo puedes enviar un video de máximo 20 segundos, pero si necesitas menos tiempo al momento de grabar puedes presionar el botón enviar o la tecla enter y se enviará lo grabado hasta el momento o para cancelar la grabación presiona escape o el botón cancelar, al finalizar el sistema te pedirá votar cual resultado es correcto, para hacer seguimiento de los resultados.</p>
         
         <div className="flex flex-col md:flex-row gap-6 mt-6">
@@ -336,9 +396,6 @@ export default function SignRecognizer() {
                             <p className="text-blue-700 font-medium animate-pulse">
                                 Procesando el video en ambos modelos...
                             </p>
-                            <p className="text-blue-600 text-sm mt-1">
-                                Se ajusta automáticamente el tiempo de corte si no se detectan señas.
-                            </p>
                         </div>
                     )}
 
@@ -346,12 +403,12 @@ export default function SignRecognizer() {
                     <div className="grid grid-cols-1 gap-4">
                         <div className="bg-white shadow rounded-lg p-5">
                             <h3 className="text-lg font-bold text-blue-600 mb-2">Modelo Colsign 154</h3>
-                            {renderNarrativeContent(flatResponse, 'flat')}
+                            {renderNarrativeContent(flatResponse)}
                         </div>
 
                         <div className="bg-white shadow rounded-lg p-5">
                             <h3 className="text-lg font-bold text-blue-600 mb-2">Estrategia Jerárquica</h3>
-                            {renderNarrativeContent(hierarchicalResponse, 'hierarchical')}
+                            {renderNarrativeContent(hierarchicalResponse)}
                         </div>
                     </div>
 
@@ -359,7 +416,7 @@ export default function SignRecognizer() {
                     {hasResults && !isProcessing && (
                         <div className="mt-6 border-t pt-5">
                             <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
-                                ¿Cuál resultado consideras coherente?
+                                ¿Cuál resultado se ajusta mejor a las señas enviadas?
                             </h3>
                             <div className="flex flex-wrap justify-center gap-3">
                                 {selectionOptions.map((option) => (
@@ -400,6 +457,98 @@ export default function SignRecognizer() {
                 </div>
             </div>
         </div>
+
+        {/* Modal con las señas disponibles */}
+        {showLabelsModal && (
+            <div
+                className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                onClick={handleCloseLabelsModal}
+            >
+                <div
+                    className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[80vh] flex flex-col"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex items-center justify-between px-6 py-4 border-b">
+                        <div className="flex items-center gap-3">
+                            {selectedSign && (
+                                <button
+                                    type="button"
+                                    onClick={handleBackToLabels}
+                                    className="text-blue-600 hover:text-blue-800 font-medium"
+                                >
+                                    ← Volver
+                                </button>
+                            )}
+                            <h3 className="text-lg font-semibold text-gray-800">
+                                {selectedSign
+                                    ? `Ejemplo: ${selectedSign.name}`
+                                    : `Señas disponibles${availableLabels.length > 0 ? ` (${availableLabels.length})` : ''}`}
+                            </h3>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={handleCloseLabelsModal}
+                            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+                            aria-label="Cerrar"
+                        >
+                            &times;
+                        </button>
+                    </div>
+
+                    <div className="p-6 overflow-y-auto">
+                        {selectedSign ? (
+                            // Vista de detalle: video de ejemplo de la seña seleccionada
+                            signError ? (
+                                <p className="text-red-600 text-center">{signError}</p>
+                            ) : selectedSign.videoPath ? (
+                                <ExampleVideo
+                                    name={selectedSign.name}
+                                    meaning={selectedSign.meaning}
+                                    videoPath={selectedSign.videoPath}
+                                    reference={selectedSign.reference}
+                                />
+                            ) : (
+                                <p className="text-gray-500 text-center">No hay video disponible para esta seña.</p>
+                            )
+                        ) : isLoadingSign ? (
+                            <p className="text-blue-600 text-center animate-pulse">Cargando video de ejemplo...</p>
+                        ) : isLoadingLabels ? (
+                            <p className="text-blue-600 text-center animate-pulse">Cargando señas...</p>
+                        ) : labelsError ? (
+                            <p className="text-red-600 text-center">{labelsError}</p>
+                        ) : (
+                            <>
+                                <p className="text-sm text-gray-500 mb-3 text-center">
+                                    Selecciona una seña para ver su video de ejemplo.
+                                </p>
+                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                                    {availableLabels.map((label, index) => (
+                                        <button
+                                            key={`${label}-${index}`}
+                                            type="button"
+                                            onClick={() => handleSelectLabel(label)}
+                                            className="px-3 py-1.5 bg-gray-100 rounded-md text-sm text-gray-700 text-center break-words hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                                        >
+                                            {label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="px-6 py-3 border-t text-right">
+                        <button
+                            type="button"
+                            onClick={handleCloseLabelsModal}
+                            className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700"
+                        >
+                            Cerrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
         </ProtectedRoute>
     );
 }
